@@ -28,7 +28,7 @@ Add Embabel Common BOM to your `pom.xml`:
     </dependencies>
 </dependencyManagement>
 ```
-Add module(s) of interest as needed to your `pom.xml`
+Add module(s) of interest as dependency to your `pom.xml`
 
 ```xml
 <dependencies>
@@ -36,6 +36,22 @@ Add module(s) of interest as needed to your `pom.xml`
         <groupId>com.embabel.common</groupId>
         <artifactId>embabel-common-core</artifactId>
     </dependency>
+
+    <dependency>
+        <groupId>com.embabel.common</groupId>
+        <artifactId>embabel-common-util</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>com.embabel.common</groupId>
+        <artifactId>embabel-common-ai</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>com.embabel.common</groupId>
+        <artifactId>embabel-common-textio</artifactId>
+    </dependency>
+
 </dependencies>
 ```
 
