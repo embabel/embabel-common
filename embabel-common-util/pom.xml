@@ -13,11 +13,5 @@
     <name>Embabel Common Utils Module</name>
     <description>Common Utilities for Embabel Modules</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
-        </dependency>
-    </dependencies>
     
 </project>
