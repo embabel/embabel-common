@@ -7,10 +7,16 @@
         <artifactId>embabel-common-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>embabel-common-util</artifactId>
+    <artifactId>embabel-common-textio</artifactId>
     <packaging>jar</packaging>
-    <name>Embabel Common Utils Module</name>
-    <description>Common Utilities for Embabel Modules</description>
+    <name>Embabel Common TextIO Module</name>
+    <description>TextIO components for Embabel Modules</description>
 
-    
+    <dependencies>
+        <dependency>
+            <groupId>com.hubspot.jinjava</groupId>
+            <artifactId>jinjava</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

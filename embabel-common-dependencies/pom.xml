@@ -20,7 +20,25 @@
         <dependencies>
             <dependency>
                 <groupId>com.embabel.common</groupId>
+                <artifactId>embabel-common-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.embabel.common</groupId>
+                <artifactId>embabel-common-ai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.embabel.common</groupId>
+                <artifactId>embabel-common-textio</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

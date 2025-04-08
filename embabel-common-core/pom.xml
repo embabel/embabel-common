@@ -7,10 +7,19 @@
         <artifactId>embabel-common-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>embabel-common-util</artifactId>
+    <artifactId>embabel-common-core</artifactId>
     <packaging>jar</packaging>
-    <name>Embabel Common Utils Module</name>
-    <description>Common Utilities for Embabel Modules</description>
+    <name>Embabel Common Core Module</name>
+    <description>Common Core Classes shared across Embabel Modules.</description>
 
-    
+    <dependencies>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
 </project>
