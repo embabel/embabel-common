@@ -13,7 +13,7 @@ The Embabel Common repository provides core components, utilities, and shared de
 
 ### Using in Your Project
 
-Add the following to your `pom.xml`:
+Add Embabel Common BOM to your `pom.xml`:
 
 ```xml
 <dependencyManagement>
@@ -27,6 +27,30 @@ Add the following to your `pom.xml`:
         </dependency>
     </dependencies>
 </dependencyManagement>
+```
+Add module(s) of interest as needed to your `pom.xml`
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.embabel.common</groupId>
+        <artifactId>embabel-common-core</artifactId>
+    </dependency>
+</dependencies>
+```
+
+## Repository
+
+Binary Packages are located in github repository
+
+```xml
+<repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/embabel/</url>
+    <snapshots>
+         <enabled>true</enabled>
+    </snapshots>
+</repository>
 ```
 
 ## License
