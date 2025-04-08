@@ -46,7 +46,7 @@ Binary Packages are located in github repository
 ```xml
 <repository>
     <id>github</id>
-    <url>https://maven.pkg.github.com/embabel/</url>
+    <url>https://maven.pkg.github.com/embabel/embabel-common</url>
     <snapshots>
          <enabled>true</enabled>
     </snapshots>
