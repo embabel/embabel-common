@@ -43,5 +43,12 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/embabel/embabel-common</url>
+        </repository>
+    </distributionManagement>
     
 </project>
