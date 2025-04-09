@@ -18,7 +18,6 @@ Add Embabel Common BOM to your `pom.xml`:
 ```xml
 <dependencyManagement>
     <dependencies>
-
         <dependency>
             <groupId>com.embabel.common</groupId>
             <artifactId>embabel-common-dependencies</artifactId>
@@ -52,7 +51,6 @@ Add module(s) of interest as dependency to your `pom.xml`
         <groupId>com.embabel.common</groupId>
         <artifactId>embabel-common-textio</artifactId>
     </dependency>
-
 </dependencies>
 ```
 
