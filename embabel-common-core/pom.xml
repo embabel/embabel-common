@@ -13,10 +13,15 @@
     <description>Common Core Classes shared across Embabel Modules.</description>
 
     <dependencies>
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>info.schnatterer.moby-names-generator</groupId>
+            <artifactId>moby-names-generator</artifactId>
         </dependency>
 
     </dependencies>
