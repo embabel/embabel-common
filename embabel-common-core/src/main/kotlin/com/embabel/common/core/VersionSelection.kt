@@ -16,9 +16,6 @@
 package com.embabel.common.core
 
 import io.swagger.v3.oas.annotations.media.Schema
-import org.springframework.data.neo4j.core.schema.GeneratedValue
-import org.springframework.data.neo4j.core.schema.Id
-import org.springframework.data.neo4j.core.support.UUIDStringGenerator
 
 /**
  * Identifies a version we want to use: name and version.
@@ -38,7 +35,6 @@ data class VersionSelection(
     )
     val version: Int? = null,
     // Only needed for persistence, can be ignored otherwise
-    @Id @GeneratedValue(UUIDStringGenerator::class)
     private val id: String? = null,
 ) {
 
