@@ -29,9 +29,9 @@ jobs:
       - name: Configure Maven Settings
         uses: s4u/maven-settings-action@v2.8.0
         with:
-          servers: ${{secrets.GITREPO_SERVER}}
+          servers: ${{secrets.GITREPO_WRITE_PACKAGE}}
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITREPO_WRITE_PACKAGE }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B test verify deploy
+        run: mvn -B test verify
