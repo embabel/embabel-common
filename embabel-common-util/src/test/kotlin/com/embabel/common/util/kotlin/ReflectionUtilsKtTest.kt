@@ -13,14 +13,20 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.embabel.common.util
+package com.embabel.common.util.kotlin
 
-/**
- * Time this block of code and return the result and the time it took to execute.
- */
-fun <T> time(block: () -> T): Pair<T, Long> {
-    val start = System.currentTimeMillis()
-    val result = block()
-    val end = System.currentTimeMillis()
-    return Pair(result, end - start)
-}
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
+private class NoSupertypes
+
+private interface IThing
+
+private open class CThing
+
+private class InterfaceOnly : IThing
+
+private class ClassOnly : CThing()
+
+private class ClassAndInterface : IThing, CThing()
