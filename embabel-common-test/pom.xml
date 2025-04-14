@@ -7,15 +7,12 @@
         <artifactId>embabel-common-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>embabel-common-ai</artifactId>
+    <artifactId>embabel-common-test</artifactId>
     <packaging>jar</packaging>
-    <name>Embabel Common AI Module</name>
-    <description>Embabel AI common framework</description>
+    <name>Embabel Common Test Module</name>
+    <description>Embabel Test Classes and Framework shared across Embabel Modules.</description>
+
     <dependencies>
-        <dependency>
-            <groupId>com.embabel.common</groupId>
-            <artifactId>embabel-common-core</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.embabel.common</groupId>
@@ -23,9 +20,21 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
+            <groupId>com.embabel.common</groupId>
+            <artifactId>embabel-common-ai</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk-jvm</artifactId>
+            <version>1.13.3</version>
+        </dependency>
+
     </dependencies>
 
 
