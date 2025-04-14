@@ -20,6 +20,7 @@
         <module>embabel-common-util</module>
         <module>embabel-common-ai</module>
         <module>embabel-common-textio</module>
+        <module>embabel-common-test</module>
     </modules>
 
     <dependencyManagement>
@@ -35,7 +36,7 @@
     </dependencyManagement>
 
     <dependencies>
-
+        
         <!-- Kotlin Dependencies -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -118,6 +119,7 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
