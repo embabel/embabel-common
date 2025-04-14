@@ -25,7 +25,11 @@ The Embabel Common repository provides core components, utilities, and shared de
 ## Modules
 
 - **embabel-common-dependencies**: Dependency management (BOM) for maintaining consistent library versions across all Embabel projects
+- **embabel-common-core**: Core components shared across all Embabel servcies
 - **embabel-common-util**: Core utilities and domain primitives shared across all services
+- **embabel-common-ai**:   Embabel AI frameworkwork shared across frameworks and services.
+- **embabel-common-textio**: Text IO framework shared for Embbel internal use.
+- **embabel-common-test**: Test Framework for Embabel Modules. 
 
 ### Using in Your Project
 
