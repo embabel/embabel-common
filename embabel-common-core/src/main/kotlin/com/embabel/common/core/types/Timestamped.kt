@@ -15,9 +15,14 @@
 */
 package com.embabel.common.core.types
 
+import io.swagger.v3.oas.annotations.media.Schema
 import java.time.Instant
 
 interface Timestamped {
 
+    @get:Schema(
+        description = "Timestamp of the search results",
+        example = "2024-07-01T00:00:00Z",
+    )
     val timestamp: Instant
 }

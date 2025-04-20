@@ -39,3 +39,25 @@ interface SimilarityCutoff {
     )
     val topK: Int
 }
+
+interface SimilaritySearchRequest : SimilarityCutoff
+
+/**
+ * Result from a similarity search
+ */
+interface SimilarityResult<M> {
+    @get:Schema(description = "Match", required = true)
+    val match: M
+
+    @get:Schema(
+        description = "Similarity score",
+        example = "0.8",
+        minimum = "0",
+        maximum = "1",
+        required = true,
+    )
+    val score: ZeroToOne
+}
+
+@Schema(description = "Results from a similarity search")
+interface SimilaritySearchResults<M> : SearchResults<SimilaritySearchRequest, SimilarityResult<M>>

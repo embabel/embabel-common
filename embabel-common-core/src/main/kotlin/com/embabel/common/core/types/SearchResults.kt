@@ -16,16 +16,17 @@
 package com.embabel.common.core.types
 
 import io.swagger.v3.oas.annotations.media.Schema
-import java.time.Duration
 
-interface Timed {
+interface SearchResults<R, T> : Timestamped {
 
-    /**
-     * How long this process has taken
-     */
     @get:Schema(
-        description = "Running time of this process",
-        example = "2024-07-01T00:00:00Z",
+        description = "Request that generated the results",
     )
-    val runningTime: Duration
+    val request: R
+
+    @get:Schema(
+        description = "Results of the search",
+    )
+    val results: List<T>
+
 }

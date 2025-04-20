@@ -15,17 +15,7 @@
 */
 package com.embabel.common.core.types
 
-import io.swagger.v3.oas.annotations.media.Schema
-import java.time.Duration
-
-interface Timed {
-
-    /**
-     * How long this process has taken
-     */
-    @get:Schema(
-        description = "Running time of this process",
-        example = "2024-07-01T00:00:00Z",
-    )
-    val runningTime: Duration
-}
+/**
+ * Improves readability
+ */
+typealias ZeroToOne = Double
