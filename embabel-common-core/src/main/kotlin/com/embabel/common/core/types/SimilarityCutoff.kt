@@ -28,7 +28,7 @@ interface SimilarityCutoff {
         maximum = "1",
         required = true,
     )
-    val similarityThreshold: Double
+    val similarityThreshold: ZeroToOne
 
     @get:Schema(
         description = "Number of results to include",
