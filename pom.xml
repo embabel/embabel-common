@@ -93,12 +93,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin.external.google</groupId>
-                    <artifactId>android-json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -127,60 +121,6 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <kotlin>
-                        <includes>
-                            <include>src/main/kotlin/**/*.kt</include>
-                            <include>src/test/kotlin/**/*.kt</include>
-                        </includes>
-                        <excludes>
-                            <exclude>src/**/generated/**/*.kt</exclude>
-                        </excludes>
-                        <licenseHeader>
-                            <content>
-/*
-* Copyright 2024-$YEAR Embabel Software, Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/                                
-                            </content>
-                        </licenseHeader>
-                        <!--<ktlint>
-                            <version>0.48.2</version>
-                            <editorConfigOverride>
-                                <indent_size>4</indent_size>
-                                <continuation_indent_size>4</continuation_indent_size>
-                                <trailing-comma-on-call-site>false</trailing-comma-on-call-site>
-                            </editorConfigOverride>
-                        </ktlint>-->
-                        <trimTrailingWhitespace/>
-                        <endWithNewline/>
-                    </kotlin>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>apply</goal>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
