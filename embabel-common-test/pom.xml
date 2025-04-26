@@ -8,9 +8,15 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>embabel-common-test</artifactId>
-    <packaging>jar</packaging>
-    <name>Embabel Common Test Module</name>
+    <packaging>pom</packaging>
+    <name>Embabel Common Test Parent</name>
     <description>Embabel Test Classes and Framework shared across Embabel Modules.</description>
+
+    <modules>
+        <module>embabel-common-test-dependencies</module>
+        <module>embabel-common-test-ai</module>
+        <module>embabel-common-test-neo</module>
+    </modules>
 
     <dependencies>
 
@@ -20,8 +26,18 @@
         </dependency>
 
         <dependency>
-            <groupId>com.embabel.common</groupId>
-            <artifactId>embabel-common-ai</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-neo4j</artifactId>
         </dependency>
 
         <dependency>
@@ -30,11 +46,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.mockk</groupId>
-            <artifactId>mockk-jvm</artifactId>
-            <version>1.13.3</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
-
     </dependencies>
 
 

@@ -10,38 +10,25 @@
         <relativePath/>
     </parent>
     <groupId>com.embabel.common</groupId>
-    <artifactId>embabel-common-dependencies</artifactId>
+    <artifactId>embabel-common-test-dependencies</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Embabel Common Dependencies</name>
-    <description>Embabel Common Dependencies for internal or external modules</description>
+    <name>Embabel Common Test Dependencies</name>
+    <description>Embabel Common Test Framework Dependencies</description>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.embabel.common</groupId>
-                <artifactId>embabel-common-core</artifactId>
+                <artifactId>embabel-common-test-ai</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.embabel.common</groupId>
-                <artifactId>embabel-common-util</artifactId>
+                <artifactId>embabel-common-test-neo</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.embabel.common</groupId>
-                <artifactId>embabel-common-ai</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.embabel.common</groupId>
-                <artifactId>embabel-common-textio</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
