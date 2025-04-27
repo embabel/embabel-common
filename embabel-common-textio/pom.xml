@@ -9,10 +9,15 @@
     </parent>
     <artifactId>embabel-common-textio</artifactId>
     <packaging>jar</packaging>
-    <name>Embabel Common TextIO Module</name>
+    <name>Embabel Common TextIO</name>
     <description>TextIO components for Embabel Modules</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.hubspot.jinjava</groupId>
             <artifactId>jinjava</artifactId>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.embabel.common.test.config
+package com.embabel.common.test.ai.config
 
 import com.embabel.common.ai.model.EmbeddingService
 import com.embabel.common.ai.model.Llm

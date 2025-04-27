@@ -8,20 +8,20 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>embabel-common-test</artifactId>
-    <packaging>jar</packaging>
-    <name>Embabel Common Test Module</name>
+    <packaging>pom</packaging>
+    <name>Embabel Common Test Parent</name>
     <description>Embabel Test Classes and Framework shared across Embabel Modules.</description>
 
-    <dependencies>
+    <modules>
+        <module>embabel-common-test-dependencies</module>
+        <module>embabel-common-test-ai</module>
+        <module>embabel-common-test-neo</module>
+    </modules>
 
+    <dependencies>
         <dependency>
             <groupId>com.embabel.common</groupId>
             <artifactId>embabel-common-util</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.embabel.common</groupId>
-            <artifactId>embabel-common-ai</artifactId>
         </dependency>
 
         <dependency>
@@ -30,11 +30,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.mockk</groupId>
-            <artifactId>mockk-jvm</artifactId>
-            <version>1.13.3</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
-
     </dependencies>
 
 
