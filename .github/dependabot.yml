@@ -4,6 +4,21 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+registries:
+  maven-central:
+    type: "maven-repository"
+    url: "https://repo.maven.apache.org/maven2"    
+  spring-milestones:
+    type: "maven-repository"
+    url: "https://repo.spring.io/milestone"
+  spring-snapshots:
+    type: "maven-repository"
+    url: "https://repo.spring.io/snapshot"
+  github-maven:
+    type: "maven-repository"
+    url: "https://maven.pkg.github.com/embabel/embabel-build"
+    username: "x-access-token"
+    password: "${{ secrets.DEPENDABOT_REPO_TOKEN }}"
 updates:
   - package-ecosystem: "maven"
     directory: "/"
