@@ -22,7 +22,7 @@ import java.util.UUID
 import java.util.regex.Pattern
 
 /**
- *      Tests for @see [NameGenerator]
+ *  @see [NameGenerator]
  *     - Tests both built-in name generators (MobyNameGenerator and RandomNameGenerator)
  *     - Verifies that generated names follow expected patterns
  *     - Includes repeated tests to ensure uniqueness of generated names

@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 /**
- *     Tests @see [VersionSelection]
+ *   @see [VersionSelection]
  *     - Tests constructor and property access
  *     - Verifies equals() and hashCode() behavior
  *     - Tests the companion object's require() method

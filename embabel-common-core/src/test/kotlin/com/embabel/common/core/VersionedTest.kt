@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 /**
- *      Tests for @see [Versioned]
+ *   @see [Versioned]
  *     - Tests SimpleVersioned implementation
  *     - Verifies versionInfo() method returns simplified version info
  *     - Tests toString() formatting with and without an ID
