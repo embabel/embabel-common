@@ -18,7 +18,7 @@ package com.embabel.common.test.ai.config
 import com.embabel.common.ai.model.EmbeddingService
 import com.embabel.common.ai.model.Llm
 import com.embabel.common.test.ai.FakeEmbeddingModel
-import com.embabel.common.util.kotlin.loggerFor
+import com.embabel.common.util.loggerFor
 import io.mockk.mockk
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.boot.test.context.TestConfiguration
