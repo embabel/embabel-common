@@ -39,7 +39,8 @@ class FakeAiConfiguration {
     fun cheapest(): Llm {
         return Llm(
             name = "gpt-4o-mini",
-            model = mockk<ChatModel>()
+            model = mockk<ChatModel>(),
+            provider = "OpenAI",
         )
     }
 
@@ -47,7 +48,8 @@ class FakeAiConfiguration {
     fun best(): Llm {
         return Llm(
             name = "gpt-4o",
-            model = mockk<ChatModel>()
+            model = mockk<ChatModel>(),
+            provider = "OpenAI",
         )
     }
 
@@ -56,6 +58,7 @@ class FakeAiConfiguration {
         return EmbeddingService(
             name = "text-embedding-ada-002",
             model = FakeEmbeddingModel(),
+            provider = "OpenAI",
         )
     }
 
