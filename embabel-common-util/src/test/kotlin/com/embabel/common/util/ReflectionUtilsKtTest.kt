@@ -15,6 +15,7 @@
  */
 package com.embabel.common.util
 
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -61,4 +62,39 @@ class ReflectionUtilsKtTest {
         }
     }
 
+    @Nested
+    inner class FindImplementationsOnClassPath {
+
+        @Test
+        fun `not implemented`() {
+            val implementations = findImplementationsOnClasspath(NotImplemented::class.java)
+            assertTrue(implementations.isEmpty())
+        }
+
+        @Test
+        fun `not find in bogus package`() {
+            val implementations = findImplementationsOnClasspath(Person::class.java, "com.bogus")
+            assertTrue(implementations.isEmpty())
+        }
+
+        @Test
+        fun `find in default package`() {
+            val implementations = findImplementationsOnClasspath(Person::class.java)
+            assertEquals(1, implementations.size)
+        }
+    }
+}
+
+interface NotImplemented {
+    fun reverse(): String
+}
+
+interface Person {
+    fun reverse(): String
+}
+
+class PersonImpl : Person {
+    override fun reverse(): String {
+        return "reversed"
+    }
 }
