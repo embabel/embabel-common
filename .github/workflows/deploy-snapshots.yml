@@ -21,7 +21,7 @@ jobs:
       - name: Configure Maven Settings
         uses: s4u/maven-settings-action@v2.8.0
         with:
-          servers: ${{secrets.GITREPO_WRITE_PACKAGE}}
+          servers: ${{secrets.EMBABEL_ARTIFACTORY}}
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
