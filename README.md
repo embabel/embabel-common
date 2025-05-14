@@ -80,8 +80,8 @@ Binary Packages are located in github repository
 
 ```xml
 <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/embabel/embabel-common</url>
+    <id>embabel-snapshots</id>
+    <url>https://repo.embabel.com/artifactory/libs-snapshot</url>
     <snapshots>
          <enabled>true</enabled>
     </snapshots>
