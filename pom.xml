@@ -14,6 +14,10 @@
     <name>Embabel Common Parent</name>
     <description>Common dependencies shared by child modules.</description>
 
+    <properties>
+        <mockk.version>1.13.3</mockk.version>
+    </properties>
+
     <modules>
         <module>embabel-common-dependencies</module>
         <module>embabel-common-core</module>
@@ -66,7 +70,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -79,7 +82,7 @@
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
-            <version>1.13.3</version>
+            <version>${mockk.version}</version>
         </dependency>
 
     </dependencies>
@@ -95,19 +98,12 @@
 
     <repositories>
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/embabel/embabel-build</url>
+            <id>embabel-snapshots</id>
+            <url>https://repo.embabel.com/artifactory/libs-snapshot</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/embabel/embabel-common</url>
-        </repository>
-    </distributionManagement>
 
 </project>
