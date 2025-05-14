@@ -12,6 +12,10 @@
     <name>Embabel Common Test Parent</name>
     <description>Embabel Test Classes and Framework shared across Embabel Modules.</description>
 
+    <properties>
+        <mockk.version>1.13.3</mockk.version>
+    </properties>
+
     <modules>
         <module>embabel-common-test-dependencies</module>
         <module>embabel-common-test-ai</module>
@@ -33,6 +37,13 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk-jvm</artifactId>
+            <version>${mockk.version}</version>
+        </dependency>
+
     </dependencies>
 
 
