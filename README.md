@@ -76,7 +76,7 @@ Add module(s) of interest as dependency to your `pom.xml`
 
 ## Repository
 
-Binary Packages are located in github repository
+Binary Packages are located in Embabel Maven Repository
 
 ```xml
 <repository>
