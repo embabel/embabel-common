@@ -115,6 +115,7 @@ class AnsiBuilderTest {
         assertEquals("${esc}[1mTest${esc}[0m", "Test".bold())
         assertEquals("${esc}[3mTest${esc}[0m", "Test".italic())
         assertEquals("${esc}[4mTest${esc}[0m", "Test".underline())
+        assertEquals("${esc}[41mTest${esc}[0m", "Test".bgColor(AnsiBgColor.BG_RED))
     }
 
     @Test
