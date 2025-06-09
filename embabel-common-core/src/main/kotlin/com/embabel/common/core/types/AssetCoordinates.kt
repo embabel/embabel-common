@@ -37,6 +37,10 @@ value class Semver(val value: String = DEFAULT_VERSION) {
          * Default version for anything versioned
          */
         const val DEFAULT_VERSION = "0.1.0-SNAPSHOT"
+
+        @JvmStatic
+        fun of(major: Int, minor: Int, patch: Int): Semver = Semver(major, minor, patch)
+
     }
 }
 
