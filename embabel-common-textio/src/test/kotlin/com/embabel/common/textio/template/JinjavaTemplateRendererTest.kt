@@ -15,19 +15,17 @@
  */
 package com.embabel.common.textio.template
 
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 
 /**
@@ -138,7 +136,21 @@ class JinjavaTemplateRendererTest {
     }
 
     @Test
-    fun `renderLoadedTemplate should load and render template`() {
+    fun `renderLoadedTemplate should load and render template using full path`() {
+        renderLoadedTemplateShouldLoadAndRenderTemplate("classpath:/prompts/test-template.jinja")
+    }
+
+    @Test
+    fun `renderLoadedTemplate should load and render template using short path without extension`() {
+        renderLoadedTemplateShouldLoadAndRenderTemplate("test-template")
+    }
+
+    @Test
+    fun `renderLoadedTemplate should load and render template using short path with extension`() {
+        renderLoadedTemplateShouldLoadAndRenderTemplate("test-template.jinja")
+    }
+
+    private fun renderLoadedTemplateShouldLoadAndRenderTemplate(location: String) {
         val templateContent = "Hello {{ name }}!"
         val model = mapOf("name" to "World")
 
@@ -146,20 +158,29 @@ class JinjavaTemplateRendererTest {
         every { resource.exists() } returns true
         every { resource.getContentAsString(Charset.defaultCharset()) } returns templateContent
 
-        val result = renderer.renderLoadedTemplate("test-template", model)
+        val result = renderer.renderLoadedTemplate(location, model)
 
         assertEquals("Hello World!", result)
     }
 
     @Test
-    fun `compileLoadedTemplate should return a CompiledTemplate`() {
+    fun `compileLoadedTemplate should return a CompiledTemplate using full path`() {
+        "classpath:/prompts/test-template.jinja"
+    }
+
+    @Test
+    fun `compileLoadedTemplate should return a CompiledTemplate using short path`() {
+        "test-template.jinja"
+    }
+
+    fun compileLoadedTemplateShouldReturnCompiledTemplate(location: String) {
         val templateContent = "Hello {{ name }}!"
 
-        every { resourceLoader.getResource("classpath:/prompts/test-template.jinja") } returns resource
+        every { resourceLoader.getResource(location) } returns resource
         every { resource.exists() } returns true
         every { resource.getContentAsString(Charset.defaultCharset()) } returns templateContent
 
-        val compiledTemplate = renderer.compileLoadedTemplate("test-template")
+        val compiledTemplate = renderer.compileLoadedTemplate(location)
 
         assertNotNull(compiledTemplate)
         assertEquals("test-template", compiledTemplate.name)

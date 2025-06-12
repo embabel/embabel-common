@@ -24,7 +24,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.core.io.ResourceLoader
-import org.springframework.lang.NonNull
 import org.springframework.util.DigestUtils
 import java.io.IOException
 import java.nio.charset.Charset
@@ -83,9 +82,15 @@ class JinjavaTemplateRenderer(
         }
     }
 
-    @NonNull
+    /**
+     * Expand the template name to a full path based on the Jinja properties.
+     */
     private fun getLocation(template: String): String {
-        return jinja.prefix + template + jinja.suffix
+        // If it's a fully specified Spring resource, return it as is
+        if (template.startsWith("classpath:") || template.startsWith("file:")) {
+            return template
+        }
+        return jinja.prefix + template + if (template.contains(jinja.suffix)) "" else jinja.suffix
     }
 
     @Throws(NoSuchTemplateException::class)
