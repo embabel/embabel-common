@@ -15,6 +15,7 @@
  */
 package com.embabel.common.test.ai.config
 
+import com.embabel.common.ai.model.DefaultOptionsConverter
 import com.embabel.common.ai.model.EmbeddingService
 import com.embabel.common.ai.model.Llm
 import com.embabel.common.test.ai.FakeEmbeddingModel
@@ -41,6 +42,7 @@ class FakeAiConfiguration {
             name = "gpt-4o-mini",
             model = mockk<ChatModel>(),
             provider = "OpenAI",
+            optionsConverter = DefaultOptionsConverter,
         )
     }
 
@@ -50,6 +52,7 @@ class FakeAiConfiguration {
             name = "gpt-4o",
             model = mockk<ChatModel>(),
             provider = "OpenAI",
+            optionsConverter = DefaultOptionsConverter,
         )
     }
 
