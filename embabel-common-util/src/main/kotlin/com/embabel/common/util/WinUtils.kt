@@ -49,7 +49,18 @@ class ConsoleFontInfoEx : Structure() {
  */
 interface Kernel32Extended : Kernel32 {
     companion object {
-        val INSTANCE: Kernel32Extended = Native.load("kernel32", Kernel32Extended::class.java)
+        val INSTANCE: Kernel32Extended? by lazy {
+            if (SystemUtils.IS_OS_WINDOWS) {
+                try {
+                    Native.load("kernel32", Kernel32Extended::class.java)
+                } catch (e: Exception) {
+                    println("Failed to load kernel32 extended functions: ${e.message}")
+                    null
+                }
+            } else {
+                null
+            }
+        }
     }
 
     fun SetCurrentConsoleFontEx(
@@ -115,14 +126,21 @@ class WinUtils {
         /**
          * Sets the console font to Cascadia Code with UTF-8 support.
          * Automatically switches to UTF-8 code page for optimal Unicode display.
+         * Preserves the original console font size unless overridden.
          *
-         * @param fontSize Optional font size (default: 16)
+         * @param fontSize Optional font size (if null, preserves current size)
          * @return true if font was successfully changed, false otherwise
          */
         @kotlin.jvm.JvmStatic
-        fun SET_CASCADIA_CODE_FONT(fontSize: Short = 16): Boolean { //NOSONAR
+        fun SET_CASCADIA_CODE_FONT(fontSize: Short? = null): Boolean { //NOSONAR
             if (!IS_OS_WINDOWS()) {
                 println("Font switching only supported on Windows")
+                return false
+            }
+
+            val kernel32Extended = Kernel32Extended.INSTANCE
+            if (kernel32Extended == null) {
+                println("Windows font APIs not available")
                 return false
             }
 
@@ -141,10 +159,13 @@ class WinUtils {
                 val fontInfo = ConsoleFontInfoEx()
                 fontInfo.cbSize = fontInfo.size()
 
-                if (!Kernel32Extended.INSTANCE.GetCurrentConsoleFontEx(consoleHandle, false, fontInfo)) {
+                if (!kernel32Extended.GetCurrentConsoleFontEx(consoleHandle, false, fontInfo)) {
                     println("Failed to get current font info")
                     return false
                 }
+
+                // Preserve original size if no specific size requested
+                val targetFontSize = fontSize ?: fontInfo.dwFontSize.Y
 
                 // Set Cascadia Code font
                 fontInfo.apply {
@@ -155,13 +176,14 @@ class WinUtils {
                         endIndex = minOf("Cascadia Code".length, FaceName.size - 1)
                     )
                     dwFontSize.X = 0 // Width (0 = default)
-                    dwFontSize.Y = fontSize
+                    dwFontSize.Y = targetFontSize
                     FontWeight = 400 // Normal weight
                 }
 
-                val success = Kernel32Extended.INSTANCE.SetCurrentConsoleFontEx(consoleHandle, false, fontInfo)
+                val success = kernel32Extended.SetCurrentConsoleFontEx(consoleHandle, false, fontInfo)
                 if (success) {
-                    println("✓ Console font changed to Cascadia Code (size: $fontSize)")
+                    val sizeMsg = if (fontSize == null) "size preserved: $targetFontSize" else "size: $targetFontSize"
+                    println("✓ Console font changed to Cascadia Code ($sizeMsg)")
                 } else {
                     println("✗ Failed to change console font to Cascadia Code")
                 }
@@ -176,6 +198,7 @@ class WinUtils {
         /**
          * Sets up optimal console for Unicode display.
          * Tries Cascadia Code first, then falls back to other suitable fonts.
+         * Preserves the original console font size.
          *
          * @return true if any suitable font was successfully applied
          */
@@ -186,12 +209,21 @@ class WinUtils {
                 return false
             }
 
+            val kernel32Extended = Kernel32Extended.INSTANCE
+            if (kernel32Extended == null) {
+                println("Windows font APIs not available")
+                return false
+            }
+
+            // Get current font size before making changes
+            val originalFontSize = getCurrentConsoleFontSize(kernel32Extended) ?: 16
+
             // Try fonts in order of preference
             val fonts = arrayOf("Cascadia Code", "Cascadia Mono", "Consolas")
 
             for (font in fonts) {
-                if (setConsoleFont(font)) {
-                    println("✓ Console optimized with $font font")
+                if (setConsoleFont(font, kernel32Extended, originalFontSize)) {
+                    println("✓ Console optimized with $font font (size preserved: $originalFontSize)")
                     return true
                 }
             }
@@ -201,9 +233,35 @@ class WinUtils {
         }
 
         /**
-         * Private helper to set any console font.
+         * Helper function to get the current console font size.
+         *
+         * @param kernel32Extended The extended kernel32 interface
+         * @return Current font size, or null if unable to retrieve
          */
-        private fun setConsoleFont(fontName: String, fontSize: Short = 16): Boolean {
+        private fun getCurrentConsoleFontSize(kernel32Extended: Kernel32Extended): Short? {
+            return try {
+                val consoleHandle = Kernel32.INSTANCE.GetStdHandle(Kernel32.STD_OUTPUT_HANDLE)
+                if (consoleHandle == null || consoleHandle.equals(WinNT.INVALID_HANDLE_VALUE)) {
+                    return null
+                }
+
+                val fontInfo = ConsoleFontInfoEx()
+                fontInfo.cbSize = fontInfo.size()
+
+                if (kernel32Extended.GetCurrentConsoleFontEx(consoleHandle, false, fontInfo)) {
+                    fontInfo.dwFontSize.Y
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        /**
+         * Private helper to set any console font with preserved or specified size.
+         */
+        private fun setConsoleFont(fontName: String, kernel32Extended: Kernel32Extended, fontSize: Short): Boolean {
             return try {
                 CHCP_TO_UTF8()
 
@@ -215,7 +273,7 @@ class WinUtils {
                 val fontInfo = ConsoleFontInfoEx()
                 fontInfo.cbSize = fontInfo.size()
 
-                if (!Kernel32Extended.INSTANCE.GetCurrentConsoleFontEx(consoleHandle, false, fontInfo)) {
+                if (!kernel32Extended.GetCurrentConsoleFontEx(consoleHandle, false, fontInfo)) {
                     return false
                 }
 
@@ -227,11 +285,11 @@ class WinUtils {
                         endIndex = minOf(fontName.length, FaceName.size - 1)
                     )
                     dwFontSize.X = 0
-                    dwFontSize.Y = fontSize
+                    dwFontSize.Y = fontSize // Use the preserved size
                     FontWeight = 400
                 }
 
-                Kernel32Extended.INSTANCE.SetCurrentConsoleFontEx(consoleHandle, false, fontInfo)
+                kernel32Extended.SetCurrentConsoleFontEx(consoleHandle, false, fontInfo)
 
             } catch (e: Exception) {
                 false
