@@ -43,6 +43,18 @@ interface SimilarityCutoff {
 interface SimilaritySearchRequest : SimilarityCutoff
 
 /**
+ * Search for results similar to a text query
+ */
+interface TextSimilaritySearchRequest : SimilaritySearchRequest {
+    @get:Schema(
+        description = "Query text to search for",
+        example = "What is the best way to implement a binary search?",
+        required = true,
+    )
+    val query: String
+}
+
+/**
  * Result from a similarity search
  */
 interface SimilarityResult<M> {
