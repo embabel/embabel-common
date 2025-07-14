@@ -59,5 +59,10 @@ interface SimilarityResult<M> {
     val score: ZeroToOne
 }
 
+data class SimpleSimilaritySearchResult<M>(
+    override val match: M,
+    override val score: ZeroToOne,
+) : SimilarityResult<M>
+
 @Schema(description = "Results from a similarity search")
 interface SimilaritySearchResults<M> : SearchResults<SimilaritySearchRequest, SimilarityResult<M>>
