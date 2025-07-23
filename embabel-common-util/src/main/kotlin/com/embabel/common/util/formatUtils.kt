@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.embabel.common.core.types
+package com.embabel.common.util
 
-/**
- * Implemented by classes that can expose human-readable information about themselves
- */
-interface HasInfoString {
+fun String.indent(
+  level: Int,
+  tabStr: String = "  ",
+): String = "${tabStr.repeat(level)}$this"
 
-    /**
-     * Human-readable String representation of the object
-     * @param verbose if true, include more detailed information
-     * @param indent the number of tabs to indent the string
-     */
-    fun infoString(
-      verbose: Boolean? = false,
-      indent: Int = 0,
-    ): String
-}
+fun String.indentLines(
+  level: Int,
+  removeBlankLines: Boolean = true,
+  tabStr: String = "  ",
+): String =
+  this
+    .lines()
+    .filter { if (removeBlankLines) it.isNotBlank() else true }
+    .joinToString("\n") { it.indent(level, tabStr) }
