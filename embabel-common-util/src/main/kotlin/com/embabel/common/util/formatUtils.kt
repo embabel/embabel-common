@@ -40,5 +40,5 @@ fun String.indentLines(
 ): String =
   this
     .lines()
-    .filter { if (removeBlankLines) it.isNotBlank() else true }
+    .run { if (removeBlankLines) filter{it.isNotBlank()} else this }
     .joinToString("\n") { it.indent(level, tabStr) }
