@@ -15,13 +15,26 @@
  */
 package com.embabel.common.util
 
+/**
+ * Indents the string by the specified number of levels.
+ * @param level The number of levels to indent. This is a relative number.
+ * @param tabStr The string to use for each level of indentation
+ * @return The indented string
+ */
 fun String.indent(
-  level: Int,
+  level: Int = 1,
   tabStr: String = "  ",
 ): String = "${tabStr.repeat(level)}$this"
 
+/**
+ * Indents each line of the string by the specified number of levels.
+ * @param level The number of levels to indent. This is a relative number.
+ * @param removeBlankLines If true, blank lines are removed
+ * @param tabStr The string to use for each level of indentation
+ * @return The indented string
+ */
 fun String.indentLines(
-  level: Int,
+  level: Int = 1,
   removeBlankLines: Boolean = true,
   tabStr: String = "  ",
 ): String =
