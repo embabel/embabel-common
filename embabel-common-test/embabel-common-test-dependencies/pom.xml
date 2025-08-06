@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.embabel.common</groupId>
     <artifactId>embabel-common-test-dependencies</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Embabel Common Test Dependencies</name>
     <description>Embabel Common Test Framework Dependencies</description>
@@ -49,9 +49,4 @@
             </snapshots>
         </repository>
     </repositories>
-    
-
-  <scm>
-    <tag>embabel-common-parent-0.1.0</tag>
-  </scm>
 </project>
