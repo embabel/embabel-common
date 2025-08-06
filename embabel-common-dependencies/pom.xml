@@ -56,9 +56,9 @@
         <repository>
             <id>embabel-snapshots</id>
             <url>https://repo.embabel.com/artifactory/libs-snapshot</url>
-            <release>
+            <releases>
                 <enabled>false</enabled>
-            </release>
+            </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
