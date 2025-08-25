@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.embabel.common</groupId>
     <artifactId>embabel-common-dependencies</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Embabel Common Dependencies</name>
     <description>Embabel Common Dependencies for internal or external modules</description>
@@ -62,8 +62,4 @@
             </snapshots>
         </repository>
     </repositories>
-
-  <scm>
-    <tag>embabel-common-parent-0.1.1</tag>
-  </scm>
 </project>
