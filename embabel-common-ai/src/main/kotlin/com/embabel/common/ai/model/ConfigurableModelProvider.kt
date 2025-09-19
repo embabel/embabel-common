@@ -31,13 +31,13 @@ import org.springframework.validation.annotation.Validated
  * @param defaultEmbeddingModel Default embedding model name. Must be an embedding model name.
  * Need not be set, in which case it defaults to null.
  */
-@ConfigurationProperties("embabel.models")
 @Validated
+@ConfigurationProperties("embabel.models")
 data class ConfigurableModelProviderProperties(
-    val llms: Map<String, String> = emptyMap(),
-    val embeddingServices: Map<String, String> = emptyMap(),
-    val defaultLlm: String = "gpt-4.1-mini",
-    val defaultEmbeddingModel: String? = null,
+    var llms: Map<String, String> = emptyMap(),
+    var embeddingServices: Map<String, String> = emptyMap(),
+    var defaultLlm: String = "gpt-4.1-mini",
+    var defaultEmbeddingModel: String? = null,
 ) {
 
     fun allWellKnownLlmNames(): Set<String> {
