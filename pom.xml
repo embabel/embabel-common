@@ -99,34 +99,6 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>kapt</id>
-                        <goals>
-                            <goal>kapt</goal>
-                        </goals>
-                        <configuration>
-                            <annotationProcessorPaths>
-                                <path>
-                                    <groupId>org.springframework.boot</groupId>
-                                    <artifactId>spring-boot-configuration-processor</artifactId>
-                                    <version>${spring-boot.version}</version>
-                                </path>
-                                <path>
-                                    <groupId>org.springframework.boot</groupId>
-                                    <artifactId>spring-boot-autoconfigure-processor</artifactId>
-                                    <version>${spring-boot.version}</version>
-                                </path>
-                            </annotationProcessorPaths>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>compile</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
