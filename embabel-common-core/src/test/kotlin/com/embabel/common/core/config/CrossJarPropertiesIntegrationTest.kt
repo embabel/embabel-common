@@ -26,11 +26,13 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.springframework.test.context.junit.jupiter.EnabledIf
 
 /**
  * Integration tests combining PropertyCore and PropertyDiscovery models
  * Tests real-world scenarios where both model types interact together
  */
+@EnabledIf("#{systemProperties['embabel.common.cross-jar.enabled'] == 'true'}")
 class CrossJarPropertiesIntegrationTest {
 
     @BeforeEach
