@@ -16,6 +16,7 @@
 package com.embabel.common.core.config
 
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -69,8 +70,16 @@ import java.util.*
  * - **High Precedence**: Loaded early with `HIGHEST_PRECEDENCE` order
  * - **Override Friendly**: System properties and environment variables can still override
  * - **Graceful Degradation**: Missing files don't break application startup
+ *
+ * Deactivated  by configuration in favour of more simple, less generic solution:
+ * @see  CommonPlatformPropertiesLoader
  */
 @Configuration
+@ConditionalOnProperty(
+    name = ["embabel.common.cross-jar.enabled"],
+    havingValue = "true",
+    matchIfMissing = false  // Default: disabled
+)
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class CrossJarPropertiesConfiguration {
 
