@@ -73,6 +73,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- kotlin-test works with current version alignment. Consider kotlin-test-junit5 for enhanced JUnit 5 integration (test discovery, parameterized tests) -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
