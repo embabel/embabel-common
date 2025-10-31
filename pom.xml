@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.embabel.common</groupId>
     <artifactId>embabel-common-parent</artifactId>
-    <version>0.1.5-SNAPSHOT</version>
+    <version>0.1.5.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Embabel Common Parent</name>
     <description>Common dependencies shared by child modules.</description>
