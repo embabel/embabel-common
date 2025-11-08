@@ -13,6 +13,14 @@
     <packaging>pom</packaging>
     <name>Embabel Common Test Dependencies</name>
     <description>Embabel Common Test Framework Dependencies</description>
+    <url>https://github.com/embabel/embabel-common</url>
+
+    <scm>
+        <url>https://github.com/embabel/embabel-common</url>
+        <connection>scm:git:https://github.com/embabel/embabel-common.git</connection>
+        <developerConnection>scm:git:https://github.com/embabel/embabel-common.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>

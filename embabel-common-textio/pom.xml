@@ -10,6 +10,14 @@
     <packaging>jar</packaging>
     <name>Embabel Common TextIO</name>
     <description>TextIO components for Embabel Modules</description>
+    <url>https://github.com/embabel/embabel-common</url>
+
+    <scm>
+        <url>https://github.com/embabel/embabel-common</url>
+        <connection>scm:git:https://github.com/embabel/embabel-common.git</connection>
+        <developerConnection>scm:git:https://github.com/embabel/embabel-common.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencies>
         <dependency>

@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <name>Embabel Common Parent</name>
     <description>Common dependencies shared by child modules.</description>
+    <url>https://github.com/embabel/embabel-common</url>
 
     <properties>
         <mockk.version>1.13.3</mockk.version>

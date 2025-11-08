@@ -10,12 +10,20 @@
     <packaging>pom</packaging>
     <name>Embabel Common Test Parent</name>
     <description>Embabel Test Classes and Framework shared across Embabel Modules.</description>
+    <url>https://github.com/embabel/embabel-common</url>
 
     <modules>
         <module>embabel-common-test-dependencies</module>
         <module>embabel-common-test-ai</module>
         <module>embabel-common-test-neo</module>
     </modules>
+
+    <scm>
+        <url>https://github.com/embabel/embabel-common</url>
+        <connection>scm:git:https://github.com/embabel/embabel-common.git</connection>
+        <developerConnection>scm:git:https://github.com/embabel/embabel-common.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencies>
         <dependency>
