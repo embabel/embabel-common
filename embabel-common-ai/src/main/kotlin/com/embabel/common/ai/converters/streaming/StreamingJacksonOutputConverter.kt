@@ -119,15 +119,20 @@ class StreamingJacksonOutputConverter<T> : JacksonOutputConverter<T> {
            |Do not include explanations, only RFC8259 compliant JSON objects, one per line.
            |Do not include markdown code blocks or wrap in arrays.
            |
-           |If you need to show reasoning, prefix thinking lines with "//THINKING: " followed by your thoughts.
+           |You may include thinking lines ANYWHERE in your response using:
+           |//THINKING: your reasoning here
            |
-           |JSON Schema for each line:
+           |Thinking lines can appear before, between, or after JSON objects as needed for your reasoning process.
+           |
+           |JSON Schema for each object line:
            |```${jsonSchema}```
            |
-           |Example output:
+           |Example output showing flexible thinking placement:
+           |//THINKING: Let me analyze this step by step
            |{"field1": "value1", "field2": "value2"}
+           |//THINKING: The next item requires different consideration
            |{"field1": "value3", "field2": "value4"}
-           |//THINKING: This is my reasoning about the next item
+           |//THINKING: Final thoughts on the results
            |{"field1": "value5", "field2": "value6"}
            |""".trimMargin()
 }
