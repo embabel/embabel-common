@@ -15,19 +15,21 @@
  */
 package com.embabel.common.ai.converters.streaming
 
-import com.embabel.common.ai.converters.JacksonOutputConverter
+import com.embabel.common.ai.converters.FilteringJacksonOutputConverter
 import com.embabel.common.core.streaming.StreamingEvent
+import org.springframework.ai.util.LoggingMarkers
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.core.ParameterizedTypeReference
 import reactor.core.publisher.Flux
+import java.util.function.Predicate
 
 /**
- * Streaming output converter that extends JacksonOutputConverter to support JSONL format.
+ * Streaming output converter that extends FilteringJacksonOutputConverter to support JSONL format.
  *
  * This converter enables streaming LLM responses by:
  * - Converting JSONL (JSON Lines) input to reactive Flux<T> streams of typed objects
  * - Supporting mixed content streams with both objects and thinking content via StreamingEvent<T>
- * - Inheriting JSON schema injection capabilities from parent JacksonOutputConverter
+ * - Inheriting JSON schema injection and property filtering capabilities from parent FilteringJacksonOutputConverter
  * - Providing instructions to LLMs for proper JSONL output formatting
  *
  * Use cases:
@@ -38,17 +40,19 @@ import reactor.core.publisher.Flux
  * The converter requests JSONL format from LLMs and parses each line as a separate
  * JSON object, emitting them as reactive stream events as they become available.
  */
-class StreamingJacksonOutputConverter<T> : JacksonOutputConverter<T> {
+class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
 
     constructor(
         clazz: Class<T>,
         objectMapper: ObjectMapper,
-    ) : super(clazz, objectMapper)
+        propertyFilter: Predicate<String> = Predicate { true },
+    ) : super(clazz, objectMapper, propertyFilter)
 
     constructor(
         typeReference: ParameterizedTypeReference<T>,
         objectMapper: ObjectMapper,
-    ) : super(typeReference, objectMapper)
+        propertyFilter: Predicate<String> = Predicate { true },
+    ) : super(typeReference, objectMapper, propertyFilter)
 
     /**
      * Convert streaming JSONL text to a Flux of typed objects.
@@ -68,7 +72,8 @@ class StreamingJacksonOutputConverter<T> : JacksonOutputConverter<T> {
                         // Continue processing other lines instead of failing entire stream
                     }
                 } catch (e: Exception) {
-                    logger.error("Failed to parse JSON line: {}", line, e)
+                    logger.error(LoggingMarkers.SENSITIVE_DATA_MARKER, "Failed to parse JSON line: {}", line)
+                    logger.debug("JSON parsing error details", e)
                     sink.error(IllegalArgumentException("Failed to parse JSON line: $line", e))
                 }
             }
@@ -102,7 +107,8 @@ class StreamingJacksonOutputConverter<T> : JacksonOutputConverter<T> {
                         }
                     }
                 } catch (e: Exception) {
-                    logger.error("Failed to process line in mixed content stream: {}", line, e)
+                    logger.error(LoggingMarkers.SENSITIVE_DATA_MARKER, "Failed to process line in mixed content stream: {}", line)
+                    logger.debug("Mixed content processing error details", e)
                     sink.error(IllegalArgumentException("Failed to process line: $line", e))
                 }
             }
@@ -116,7 +122,7 @@ class StreamingJacksonOutputConverter<T> : JacksonOutputConverter<T> {
         """|
            |Your response should be in JSONL (JSON Lines) format.
            |Each line should contain exactly one JSON object matching the schema.
-           |Do not include explanations, only RFC8259 compliant JSON objects, one per line.
+           |Do not include explanations, only RFC7464 compliant JSON Lines, one per line.
            |Do not include markdown code blocks or wrap in arrays.
            |
            |You may include thinking lines ANYWHERE in your response using:

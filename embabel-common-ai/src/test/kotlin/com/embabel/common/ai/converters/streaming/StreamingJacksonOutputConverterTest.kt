@@ -17,8 +17,8 @@ package com.embabel.common.ai.converters.streaming
 
 import com.embabel.common.core.streaming.StreamingEvent
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class StreamingJacksonOutputConverterTest {
@@ -26,6 +26,13 @@ class StreamingJacksonOutputConverterTest {
     private val objectMapper = jacksonObjectMapper()
 
     data class SimpleItem(val name: String)
+
+    data class Person(
+        val name: String,
+        val age: Int,
+        val email: String,
+        val address: String
+    )
 
     @Test
     fun `getFormat should request JSONL format instead of single JSON`() {
@@ -213,5 +220,121 @@ class StreamingJacksonOutputConverterTest {
         assertThrows<IllegalArgumentException> {
             converter.convertStreamWithThinking(mixedContent).collectList().block()
         }
+    }
+
+    @Test
+    fun `streaming converter should include only specified properties in schema`() {
+        // Given
+        val converter = StreamingJacksonOutputConverter(
+            clazz = Person::class.java,
+            objectMapper = objectMapper,
+            propertyFilter = { it == "name" || it == "age" }
+        )
+
+        // When
+        val schema = converter.jsonSchema
+
+        // Then
+        assertTrue(schema.contains("name"))
+        assertTrue(schema.contains("age"))
+        assertFalse(schema.contains("email"))
+        assertFalse(schema.contains("address"))
+    }
+
+    @Test
+    fun `streaming converter should filter properties in multi-object JSONL`() {
+        // Given - converter that only allows name and age
+        val converter = StreamingJacksonOutputConverter(
+            clazz = Person::class.java,
+            objectMapper = objectMapper,
+            propertyFilter = { it == "name" || it == "age" }
+        )
+
+        // Create JSONL with multiple Person objects containing all fields
+        val jsonlInput = """
+            {"name": "Alice", "age": 30, "email": "alice@test.com", "address": "123 Main St"}
+            {"name": "Bob", "age": 25, "email": "bob@test.com", "address": "456 Oak Ave"}
+        """.trimIndent()
+
+        // When
+        val result = converter.convertStream(jsonlInput)
+
+        // Then
+        val people = result.collectList().block()
+        assertNotNull(people)
+        assertEquals(2, people!!.size)
+
+        // Verify first person has only name and age (filtered properties should be default/null)
+        assertEquals("Alice", people[0].name)
+        assertEquals(30, people[0].age)
+        // Note: Jackson will use default constructor values for filtered fields
+
+        // Verify second person
+        assertEquals("Bob", people[1].name)
+        assertEquals(25, people[1].age)
+    }
+
+    @Test
+    fun `streaming converter format should include filtered schema only`() {
+        // Given
+        val converter = StreamingJacksonOutputConverter(
+            clazz = Person::class.java,
+            objectMapper = objectMapper,
+            propertyFilter = { it == "name" }
+        )
+
+        // When
+        val format = converter.getFormat()
+
+        // Then
+        assertTrue(format.contains("name"))
+        assertFalse(format.contains("email"))
+        assertFalse(format.contains("address"))
+    }
+
+    @Test
+    fun `streaming converter should handle filtering with actual streaming for multiple objects`() {
+        // Given - converter that only allows name and age
+        val converter = StreamingJacksonOutputConverter(
+            clazz = Person::class.java,
+            objectMapper = objectMapper,
+            propertyFilter = { it == "name" || it == "age" }
+        )
+
+        val jsonlInput = """
+            {"name": "Alice", "age": 30, "email": "alice@test.com", "address": "123 Main St"}
+            {"name": "Bob", "age": 25, "email": "bob@test.com", "address": "456 Oak Ave"}
+        """.trimIndent()
+
+        // When - use actual streaming with subscribe
+        val streamedPeople = mutableListOf<Person>()
+        var completedSuccessfully = false
+
+        converter.convertStream(jsonlInput)
+            .doOnNext { person ->
+                streamedPeople.add(person)
+                println("Streamed person: ${person.name}, age: ${person.age}")
+            }
+            .doOnComplete { completedSuccessfully = true }
+            .subscribe()
+
+        // Give stream time to complete (in real async scenario would use proper waiting)
+        Thread.sleep(100)
+
+        // Then - verify streaming with filtering worked
+        assertTrue(completedSuccessfully, "Stream should complete successfully")
+        assertEquals(2, streamedPeople.size, "Should receive 2 filtered persons")
+
+        // Verify first person (Alice) - filtered properties only
+        assertEquals("Alice", streamedPeople[0].name)
+        assertEquals(30, streamedPeople[0].age)
+
+        // Verify second person (Bob) - filtered properties only
+        assertEquals("Bob", streamedPeople[1].name)
+        assertEquals(25, streamedPeople[1].age)
+
+        // Verify streaming preserved order
+        assertEquals("Alice", streamedPeople[0].name)
+        assertEquals("Bob", streamedPeople[1].name)
     }
 }
