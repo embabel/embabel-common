@@ -6,6 +6,8 @@
 
 .idea
 
+.claude
+
 .idea/workspace.xml
 
 **/*.log
