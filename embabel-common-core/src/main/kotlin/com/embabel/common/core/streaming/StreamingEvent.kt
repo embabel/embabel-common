@@ -56,4 +56,20 @@ sealed class StreamingEvent<out T> {
      * Check if this event is thinking
      */
     fun isThinking(): Boolean = this is Thinking
+
+    /**
+     * Get the thinking content if this is a thinking event, null otherwise
+     */
+    fun getThinking(): String? = when (this) {
+        is Thinking -> content
+        is Object -> null
+    }
+
+    /**
+     * Get the object if this is an object event, null otherwise
+     */
+    fun getObject(): T? = when (this) {
+        is Object -> item
+        is Thinking -> null
+    }
 }

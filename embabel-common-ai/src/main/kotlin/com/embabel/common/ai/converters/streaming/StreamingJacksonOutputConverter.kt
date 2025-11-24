@@ -17,6 +17,7 @@ package com.embabel.common.ai.converters.streaming
 
 import com.embabel.common.ai.converters.FilteringJacksonOutputConverter
 import com.embabel.common.core.streaming.StreamingEvent
+import com.embabel.common.core.streaming.StreamingUtils
 import org.springframework.ai.util.LoggingMarkers
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.core.ParameterizedTypeReference
@@ -90,8 +91,8 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
             .handle { line, sink ->
                 try {
                     when {
-                        line.startsWith("//THINKING:") -> {
-                            val thinkingContent = line.removePrefix("//THINKING:").trim()
+                        StreamingUtils.isThinkingLine(line) -> {
+                            val thinkingContent = StreamingUtils.extractThinkingContent(line)
                             logger.debug("Processing thinking line: {}", thinkingContent)
                             sink.next(StreamingEvent.Thinking(thinkingContent))
                         }
@@ -125,20 +126,20 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
            |Do not include explanations, only RFC7464 compliant JSON Lines, one per line.
            |Do not include markdown code blocks or wrap in arrays.
            |
-           |You may include thinking lines ANYWHERE in your response using:
-           |//THINKING: your reasoning here
+           |You may include thinking content ANYWHERE in your response using:
+           |<think>your reasoning here</think>
            |
-           |Thinking lines can appear before, between, or after JSON objects as needed for your reasoning process.
+           |Thinking blocks can appear before, between, or after JSON objects as needed for your reasoning process.
            |
            |JSON Schema for each object line:
            |```${jsonSchema}```
            |
            |Example output showing flexible thinking placement:
-           |//THINKING: Let me analyze this step by step
+           |<think>Let me analyze this step by step</think>
            |{"field1": "value1", "field2": "value2"}
-           |//THINKING: The next item requires different consideration
+           |<think>The next item requires different consideration</think>
            |{"field1": "value3", "field2": "value4"}
-           |//THINKING: Final thoughts on the results
+           |<think>Final thoughts on the results</think>
            |{"field1": "value5", "field2": "value6"}
            |""".trimMargin()
 }

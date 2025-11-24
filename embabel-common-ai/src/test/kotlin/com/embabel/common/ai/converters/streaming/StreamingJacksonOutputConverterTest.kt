@@ -46,7 +46,7 @@ class StreamingJacksonOutputConverterTest {
         assertTrue(format.contains("JSONL (JSON Lines) format"))
         assertTrue(format.contains("Each line should contain exactly one JSON object"))
         assertTrue(format.contains("wrap in arrays"))
-        assertTrue(format.contains("//THINKING:"))
+        assertTrue(format.contains("<think>"))
     }
 
     @Test
@@ -121,7 +121,7 @@ class StreamingJacksonOutputConverterTest {
         // Given
         val converter = StreamingJacksonOutputConverter(SimpleItem::class.java, objectMapper)
         val mixedContent = """
-            //THINKING: analyzing requirement
+            <think>analyzing requirement</think>
             {"name": "result"}
         """.trimIndent()
 
@@ -145,8 +145,8 @@ class StreamingJacksonOutputConverterTest {
         // Given
         val converter = StreamingJacksonOutputConverter(SimpleItem::class.java, objectMapper)
         val content = """
-            //THINKING: step 1
-            //THINKING: step 2
+            <think>step 1</think>
+            <analysis>step 2</analysis>
             {"name": "final"}
         """.trimIndent()
 
@@ -160,10 +160,10 @@ class StreamingJacksonOutputConverterTest {
     }
 
     @Test
-    fun `convertStreamWithThinking should strip THINKING prefix correctly`() {
+    fun `convertStreamWithThinking should extract thinking content correctly`() {
         // Given
         val converter = StreamingJacksonOutputConverter(SimpleItem::class.java, objectMapper)
-        val thinkingLine = "//THINKING: detailed analysis here"
+        val thinkingLine = "<think>detailed analysis here</think>"
 
         // When
         val result = converter.convertStreamWithThinking(thinkingLine)
@@ -175,6 +175,24 @@ class StreamingJacksonOutputConverterTest {
 
         assertTrue(events[0] is StreamingEvent.Thinking)
         assertEquals("detailed analysis here", (events[0] as StreamingEvent.Thinking).content)
+    }
+
+    @Test
+    fun `convertStreamWithThinking should support legacy THINKING prefix format`() {
+        // Given
+        val converter = StreamingJacksonOutputConverter(SimpleItem::class.java, objectMapper)
+        val legacyThinkingLine = "//THINKING: legacy format support"
+
+        // When
+        val result = converter.convertStreamWithThinking(legacyThinkingLine)
+
+        // Then
+        val events = result.collectList().block()
+        assertNotNull(events)
+        assertEquals(1, events!!.size)
+
+        assertTrue(events[0] is StreamingEvent.Thinking)
+        assertEquals("legacy format support", (events[0] as StreamingEvent.Thinking).content)
     }
 
     @Test
@@ -212,7 +230,7 @@ class StreamingJacksonOutputConverterTest {
         // Given
         val converter = StreamingJacksonOutputConverter(SimpleItem::class.java, objectMapper)
         val mixedContent = """
-            //THINKING: this is fine
+            <think>this is fine</think>
             invalid json here
         """.trimIndent()
 
