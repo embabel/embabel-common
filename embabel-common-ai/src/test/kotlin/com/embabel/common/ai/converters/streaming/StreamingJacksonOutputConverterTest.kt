@@ -220,7 +220,7 @@ class StreamingJacksonOutputConverterTest {
         val invalidJson = "invalid json line"
 
         // When & Then - Should error on malformed JSON
-        assertThrows<IllegalArgumentException> {
+        assertThrows<RuntimeException> {
             converter.convertStream(invalidJson).collectList().block()
         }
     }
@@ -235,7 +235,7 @@ class StreamingJacksonOutputConverterTest {
         """.trimIndent()
 
         // When & Then - Should error on malformed JSON
-        assertThrows<IllegalArgumentException> {
+        assertThrows<RuntimeException> {
             converter.convertStreamWithThinking(mixedContent).collectList().block()
         }
     }

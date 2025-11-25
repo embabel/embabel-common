@@ -18,7 +18,6 @@ package com.embabel.common.ai.converters.streaming
 import com.embabel.common.ai.converters.FilteringJacksonOutputConverter
 import com.embabel.common.core.streaming.StreamingEvent
 import com.embabel.common.core.streaming.StreamingUtils
-import org.springframework.ai.util.LoggingMarkers
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.core.ParameterizedTypeReference
 import reactor.core.publisher.Flux
@@ -60,25 +59,12 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
      * Each line should be a valid JSON object matching the schema.
      * Uses resilient error handling - logs warnings for null conversions but continues processing other lines.
      */
-    fun convertStream(text: String): Flux<T> {
-        return Flux.fromIterable(text.lines())
-            .filter { it.isNotBlank() }
-            .handle { line, sink ->
-                try {
-                    val result = super.convert(line)
-                    if (result != null) {
-                        sink.next(result)
-                    } else {
-                        logger.warn("Conversion returned null for line, skipping: {}", line)
-                        // Continue processing other lines instead of failing entire stream
-                    }
-                } catch (e: Exception) {
-                    logger.error(LoggingMarkers.SENSITIVE_DATA_MARKER, "Failed to parse JSON line: {}", line)
-                    logger.debug("JSON parsing error details", e)
-                    sink.error(IllegalArgumentException("Failed to parse JSON line: $line", e))
-                }
-            }
+    fun convertStream(jsonlContent: String): Flux<T> {
+        return convertStreamWithThinking(jsonlContent)
+            .filter { event -> event.isObject() }
+            .map { event -> event.getObject()!! }
     }
+
 
     /**
      * Convert streaming text with thinking blocks into StreamingEvent objects.
@@ -93,24 +79,18 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
                     when {
                         StreamingUtils.isThinkingLine(line) -> {
                             val thinkingContent = StreamingUtils.extractThinkingContent(line)
-                            logger.debug("Processing thinking line: {}", thinkingContent)
                             sink.next(StreamingEvent.Thinking(thinkingContent))
                         }
                         else -> {
                             val result = super.convert(line)
                             if (result != null) {
-                                logger.debug("Successfully parsed object from line")
                                 sink.next(StreamingEvent.Object(result))
-                            } else {
-                                logger.warn("Object conversion returned null for line, skipping: {}", line)
-                                // Continue processing other lines
+                            // Continue processing other lines
                             }
                         }
                     }
                 } catch (e: Exception) {
-                    logger.error(LoggingMarkers.SENSITIVE_DATA_MARKER, "Failed to process line in mixed content stream: {}", line)
-                    logger.debug("Mixed content processing error details", e)
-                    sink.error(IllegalArgumentException("Failed to process line: $line", e))
+                    sink.error(e)
                 }
             }
     }
