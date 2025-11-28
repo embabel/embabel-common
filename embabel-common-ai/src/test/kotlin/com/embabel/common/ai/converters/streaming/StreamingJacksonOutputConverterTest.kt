@@ -44,8 +44,8 @@ class StreamingJacksonOutputConverterTest {
 
         // Then
         assertTrue(format.contains("JSONL (JSON Lines) format"))
-        assertTrue(format.contains("Each line should contain exactly one JSON object"))
-        assertTrue(format.contains("wrap in arrays"))
+        assertTrue(format.contains("Each line must contain exactly one JSON object"))
+        assertTrue(format.contains("Do not include markdown code blocks or wrap responses in arrays"))
         assertTrue(format.contains("<think>"))
     }
 
