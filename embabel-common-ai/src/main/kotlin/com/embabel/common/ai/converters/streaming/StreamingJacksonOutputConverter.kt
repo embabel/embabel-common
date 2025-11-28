@@ -102,24 +102,23 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
     override fun getFormat(): String =
         """|
            |Your response should be in JSONL (JSON Lines) format.
-           |Each line should contain exactly one JSON object matching the schema.
-           |Do not include explanations, only RFC7464 compliant JSON Lines, one per line.
-           |Do not include markdown code blocks or wrap in arrays.
+           |Each line must contain exactly one JSON object that strictly adheres to the provided schema.
+           |Do not include any explanations in the JSON objects themselves.
+           |Do not include markdown code blocks or wrap responses in arrays.
+           |Ensure RFC7464 compliant JSON Lines, one valid JSON object per line.
            |
-           |You may include thinking content ANYWHERE in your response using:
+           |You may include reasoning content using thinking blocks:
            |<think>your reasoning here</think>
            |
-           |Thinking blocks can appear before, between, or after JSON objects as needed for your reasoning process.
+           |Thinking blocks are separate from JSON objects and can appear before, between, or after JSON lines as needed for your analysis.
            |
-           |JSON Schema for each object line:
+           |Here is the JSON Schema instance each JSON object must adhere to:
            |```${jsonSchema}```
            |
-           |Example output showing flexible thinking placement:
-           |<think>Let me analyze this step by step</think>
-           |{"field1": "value1", "field2": "value2"}
-           |<think>The next item requires different consideration</think>
-           |{"field1": "value3", "field2": "value4"}
-           |<think>Final thoughts on the results</think>
-           |{"field1": "value5", "field2": "value6"}
+           |Example format:
+           |<think>analyzing the requirements</think>
+           |{"field": "precise_value"}
+           |<think>considering next item</think>
+           |{"field": "another_precise_value"}
            |""".trimMargin()
 }
