@@ -16,6 +16,23 @@
 package com.embabel.common.core.streaming
 
 /**
+ * Thinking state classifications for multi-line thinking block processing.
+ * Enables reactive streaming of thinking content with proper state tracking.
+ */
+enum class ThinkingState {
+    /** Default state - no specific state classification attempted */
+    NONE,
+    /** Complete thinking block on single line: <think>content</think> */
+    BOTH,
+    /** Start of thinking block: <think> (content may continue on next lines) */
+    START,
+    /** End of thinking block: </think> (completes multi-line thinking) */
+    END,
+    /** Continuation of thinking content (no start/end markers) */
+    CONTINUATION
+}
+
+/**
  * Sealed class representing events in a streaming operation.
  * Provides type-safe handling of both object results and thinking content.
  * Supports Either-like functional programming patterns.
@@ -31,8 +48,12 @@ sealed class StreamingEvent<out T> {
     /**
      * Event representing thinking content from the process.
      * @param content The thinking text content
+     * @param state The thinking state indicating position within multi-line blocks
      */
-    data class Thinking(val content: String) : StreamingEvent<Nothing>()
+    data class Thinking(
+        val content: String,
+        val state: ThinkingState = ThinkingState.NONE
+    ) : StreamingEvent<Nothing>()
 
     /**
      * Either-style fold operation for functional composition.
@@ -71,5 +92,13 @@ sealed class StreamingEvent<out T> {
     fun getObject(): T? = when (this) {
         is Object -> item
         is Thinking -> null
+    }
+
+    /**
+     * Get the thinking state if this is a thinking event, NONE otherwise
+     */
+    fun getThinkingState(): ThinkingState = when (this) {
+        is Thinking -> state
+        is Object -> ThinkingState.NONE
     }
 }
