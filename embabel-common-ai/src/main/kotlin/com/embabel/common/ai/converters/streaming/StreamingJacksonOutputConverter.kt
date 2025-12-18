@@ -16,7 +16,7 @@
 package com.embabel.common.ai.converters.streaming
 
 import com.embabel.common.ai.converters.FilteringJacksonOutputConverter
-import com.embabel.common.ai.converters.streaming.support.StreamingUtils
+import com.embabel.common.ai.converters.streaming.support.ThinkingDetector
 import com.embabel.common.core.streaming.StreamingEvent
 import com.embabel.common.core.streaming.ThinkingState
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -78,7 +78,7 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
             .handle { line, sink ->
                 try {
                     // Detect thinking state for the line
-                    val thinkingState = StreamingUtils.detectThinkingState(line)
+                    val thinkingState = ThinkingDetector.detectThinkingState(line)
 
                     when (thinkingState) {
                         ThinkingState.NONE -> {
@@ -90,7 +90,7 @@ class StreamingJacksonOutputConverter<T> : FilteringJacksonOutputConverter<T> {
                         }
                         else -> {
                             // Line contains thinking content with detected state
-                            val thinkingContent = StreamingUtils.extractThinkingContent(line)
+                            val thinkingContent = ThinkingDetector.extractThinkingContent(line)
                             sink.next(StreamingEvent.Thinking(thinkingContent, thinkingState))
                         }
                     }

@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory
  * Provides centralized logic for identifying and processing thinking content in various formats
  * used by different LLM models and reasoning systems.
  */
-internal object StreamingUtils {
+internal object ThinkingDetector {
 
-    private val logger = LoggerFactory.getLogger(StreamingUtils::class.java)
+    private val logger = LoggerFactory.getLogger(ThinkingDetector::class.java)
 
     /**
      * Centralized thinking tag definitions.
@@ -194,7 +194,7 @@ internal object StreamingUtils {
      * @param line The line to check for JSON format
      * @return true if line appears to be JSON object, false otherwise
      */
-    fun isValidJson(line: String): Boolean {
+    private fun isValidJson(line: String): Boolean {
         val trimmed = line.trim()
         val isValid = trimmed.isNotEmpty() &&
                 trimmed.startsWith("{") &&
