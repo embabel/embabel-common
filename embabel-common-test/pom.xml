@@ -14,7 +14,6 @@
 
     <modules>
         <module>embabel-common-test-dependencies</module>
-        <module>embabel-common-test-ai</module>
         <module>embabel-common-test-neo</module>
     </modules>
 
