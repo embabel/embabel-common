@@ -22,7 +22,6 @@
         <module>embabel-common-dependencies</module>
         <module>embabel-common-core</module>
         <module>embabel-common-util</module>
-        <module>embabel-common-ai</module>
         <module>embabel-common-textio</module>
         <module>embabel-common-test</module>
     </modules>

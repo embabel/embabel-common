@@ -38,12 +38,6 @@
 
             <dependency>
                 <groupId>com.embabel.common</groupId>
-                <artifactId>embabel-common-ai</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-textio</artifactId>
                 <version>${project.version}</version>
             </dependency>
