@@ -108,7 +108,7 @@ fun extractAllThinkingBlocks(input: String): List<ThinkingBlock> {
     // Extract remaining content before JSON
     val noPrefixPattern = "^(.*?)(?=\\{)".toRegex(RegexOption.DOT_MATCHES_ALL)
     noPrefixPattern.find(remainingInput.trim())?.let { match ->
-        val content = match.groupValues[1].trim()
+        val content = skipMarkdownArtifacts(match.groupValues[1].trim())
         if (content.isNotEmpty()) {
             blocks.add(
                 ThinkingBlock(
@@ -121,4 +121,15 @@ fun extractAllThinkingBlocks(input: String): List<ThinkingBlock> {
     }
 
     return blocks.sortedBy { input.indexOf(it.content) }
+}
+
+/**
+ * Remove markdown artifacts that should not be considered thinking content.
+ * Currently handles ```json code fence markers that commonly appear before JSON output,
+ * see get format in [[JacksonConverter]]
+ */
+private fun skipMarkdownArtifacts(content: String): String {
+    return content
+        .replace("```json", "")
+        .trim()
 }
