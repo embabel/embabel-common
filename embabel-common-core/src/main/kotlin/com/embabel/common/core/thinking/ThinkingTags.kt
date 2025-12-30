@@ -39,7 +39,7 @@ object ThinkingTags {
         "final" to ("<final>" to "</final>"),
         "scratchpad" to ("<scratchpad>" to "</scratchpad>"),
         "chain_of_thought" to ("<chain_of_thought>" to "</chain_of_thought>"),
-        "reasoning" to ("[REASONING]" to "[/REASONING]"),
+        "reasoning" to ("<reasoning>" to "</reasoning>"),
         "legacy_prefix" to ("//THINKING:" to ""),
         "no_prefix" to ("" to "(?=\\{)")
     )
