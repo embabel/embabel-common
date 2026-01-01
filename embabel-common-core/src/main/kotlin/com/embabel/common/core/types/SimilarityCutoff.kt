@@ -52,7 +52,41 @@ interface TextSimilaritySearchRequest : SimilaritySearchRequest {
         required = true,
     )
     val query: String
+
+    companion object {
+
+        operator fun invoke(
+            query: String,
+            similarityThreshold: ZeroToOne,
+            topK: Int,
+        ): TextSimilaritySearchRequest {
+            return SimpleTextSimilaritySearchRequest(
+                query = query,
+                similarityThreshold = similarityThreshold,
+                topK = topK,
+            )
+        }
+
+        @JvmStatic
+        fun create(
+            query: String,
+            similarityThreshold: ZeroToOne,
+            topK: Int,
+        ): TextSimilaritySearchRequest {
+            return SimpleTextSimilaritySearchRequest(
+                query = query,
+                similarityThreshold = similarityThreshold,
+                topK = topK,
+            )
+        }
+    }
 }
+
+private data class SimpleTextSimilaritySearchRequest(
+    override val query: String,
+    override val similarityThreshold: ZeroToOne,
+    override val topK: Int,
+) : TextSimilaritySearchRequest
 
 /**
  * Result from a similarity search
@@ -69,6 +103,18 @@ interface SimilarityResult<M> {
         required = true,
     )
     val score: ZeroToOne
+
+    companion object {
+
+        operator fun <M> invoke(match: M, score: ZeroToOne): SimilarityResult<M> {
+            return SimpleSimilaritySearchResult(match, score)
+        }
+
+        @JvmStatic
+        fun <M> create(match: M, score: ZeroToOne): SimilarityResult<M> {
+            return SimpleSimilaritySearchResult(match, score)
+        }
+    }
 }
 
 data class SimpleSimilaritySearchResult<M>(
