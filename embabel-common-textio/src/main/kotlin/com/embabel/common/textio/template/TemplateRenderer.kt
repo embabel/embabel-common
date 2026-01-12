@@ -96,6 +96,78 @@ class NoSuchTemplateException(message: String) : RuntimeException(message) {
 }
 
 /**
- * Thrown when a template is invalid
+ * Detailed information about a template rendering error.
+ *
+ * @property message The error message
+ * @property lineNumber The line number where the error occurred (1-indexed), or null if unknown
+ * @property startPosition The character position where the error starts, or null if unknown
+ * @property fieldName The name of the field that caused the error, or null if unknown
+ * @property severity The severity level of the error (e.g., "FATAL", "WARN")
  */
-class InvalidTemplateException(message: String, cause: Throwable) : NestedRuntimeException(message, cause)
+data class TemplateErrorDetail(
+    val message: String,
+    val lineNumber: Int? = null,
+    val startPosition: Int? = null,
+    val fieldName: String? = null,
+    val severity: String? = null,
+) {
+    /**
+     * Returns a formatted string representation of this error.
+     */
+    fun format(): String = buildString {
+        if (lineNumber != null) {
+            append("Line $lineNumber")
+            if (startPosition != null) {
+                append(", position $startPosition")
+            }
+            append(": ")
+        }
+        if (fieldName != null) {
+            append("[$fieldName] ")
+        }
+        append(message)
+        if (severity != null) {
+            append(" ($severity)")
+        }
+    }
+}
+
+/**
+ * Thrown when a template is invalid.
+ *
+ * @property errors List of detailed error information, if available
+ */
+class InvalidTemplateException : NestedRuntimeException {
+    val errors: List<TemplateErrorDetail>
+
+    constructor(message: String, cause: Throwable) : super(message, cause) {
+        this.errors = emptyList()
+    }
+
+    constructor(message: String) : super(message) {
+        this.errors = emptyList()
+    }
+
+    constructor(message: String, errors: List<TemplateErrorDetail>) : super(message) {
+        this.errors = errors
+    }
+
+    constructor(message: String, errors: List<TemplateErrorDetail>, cause: Throwable) : super(message, cause) {
+        this.errors = errors
+    }
+
+    /**
+     * Returns a detailed message including all error information.
+     */
+    fun getDetailedMessage(): String = if (errors.isEmpty()) {
+        message ?: "Unknown template error"
+    } else {
+        buildString {
+            append(message ?: "Template errors")
+            append(":\n")
+            errors.forEachIndexed { index, error ->
+                append("  ${index + 1}. ${error.format()}\n")
+            }
+        }.trimEnd()
+    }
+}

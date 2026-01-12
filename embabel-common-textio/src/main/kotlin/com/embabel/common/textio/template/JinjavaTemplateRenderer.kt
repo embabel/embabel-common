@@ -17,7 +17,10 @@ package com.embabel.common.textio.template
 
 import com.hubspot.jinjava.Jinjava
 import com.hubspot.jinjava.JinjavaConfig
+import com.hubspot.jinjava.interpret.FatalTemplateErrorsException
 import com.hubspot.jinjava.interpret.JinjavaInterpreter
+import com.hubspot.jinjava.interpret.TemplateError
+import com.hubspot.jinjava.interpret.TemplateError.ErrorType
 import com.hubspot.jinjava.lib.filter.Filter
 import com.hubspot.jinjava.loader.ResourceLocator
 import org.slf4j.Logger
@@ -62,15 +65,56 @@ class JinjavaTemplateRenderer(
                 .withFailOnUnknownTokens(jinja.failOnUnknownTokens)
                 .withTrimBlocks(true)
                 .build()
-            return Jinjava(jcConfig).run {
+            val jinjava = Jinjava(jcConfig).apply {
                 registerFilter(EscFilter())
                 resourceLocator = SpringResourceLocator()
-                render(template, model)
             }
+            val result = jinjava.renderForResult(template, model)
+
+            // Check for fatal errors that require throwing an exception
+            val fatalErrors = result.errors.filter { it.severity == ErrorType.FATAL }
+            if (fatalErrors.isNotEmpty()) {
+                val errorDetails = fatalErrors.map { it.toTemplateErrorDetail() }
+                val errorSummary = errorDetails.joinToString("; ") { it.format() }
+                throw InvalidTemplateException(
+                    "Template rendering failed: $errorSummary",
+                    errorDetails
+                )
+            }
+
+            // Log non-fatal errors as warnings
+            result.errors
+                .filter { it.severity != ErrorType.FATAL }
+                .forEach { error ->
+                    logger.warn("Template warning: {}", error.toTemplateErrorDetail().format())
+                }
+
+            return result.output
+        } catch (e: FatalTemplateErrorsException) {
+            val errorDetails = e.errors.map { it.toTemplateErrorDetail() }
+            val errorSummary = errorDetails.joinToString("; ") { it.format() }
+            throw InvalidTemplateException(
+                "Fatal template error: $errorSummary",
+                errorDetails,
+                e
+            )
+        } catch (e: InvalidTemplateException) {
+            throw e
         } catch (e: Exception) {
-            throw InvalidTemplateException("Invalid template '$template'", e)
+            throw InvalidTemplateException("Invalid template: ${e.message}", e)
         }
     }
+
+    /**
+     * Convert a Jinjava TemplateError to our TemplateErrorDetail.
+     */
+    private fun TemplateError.toTemplateErrorDetail(): TemplateErrorDetail = TemplateErrorDetail(
+        message = this.message,
+        lineNumber = if (this.lineno > 0) this.lineno else null,
+        startPosition = if (this.startPosition > 0) this.startPosition else null,
+        fieldName = this.fieldName?.takeIf { it.isNotBlank() },
+        severity = this.severity?.name
+    )
 
     @Throws(NoSuchTemplateException::class, InvalidTemplateException::class)
     override fun renderLoadedTemplate(templateName: String, model: Map<String, Any>): String {
@@ -78,7 +122,12 @@ class JinjavaTemplateRenderer(
         try {
             return renderLiteralTemplate(template, model)
         } catch (ex: InvalidTemplateException) {
-            throw InvalidTemplateException("Invalid template at '$templateName'", ex)
+            // Preserve the detailed errors from the nested exception
+            throw InvalidTemplateException(
+                "Invalid template at '$templateName': ${ex.message}",
+                ex.errors,
+                ex
+            )
         }
     }
 

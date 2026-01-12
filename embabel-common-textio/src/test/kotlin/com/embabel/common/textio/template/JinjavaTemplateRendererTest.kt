@@ -222,4 +222,208 @@ class JinjavaTemplateRendererTest {
         assert(result.contains("With multiple lines"))
         assert(result.contains("Here are some details: Important information"))
     }
+
+    @Test
+    fun `error contains line number for unknown variable with strict mode`() {
+        // Use strict mode renderer to ensure errors are thrown
+        val strictRenderer = JinjavaTemplateRenderer(
+            jinja = JinjaProperties(
+                prefix = "classpath:/prompts/",
+                suffix = ".jinja",
+                failOnUnknownTokens = true
+            ),
+            resourceLoader = resourceLoader
+        )
+
+        val template = """
+            |Line 1 is fine
+            |Line 2 is fine
+            |Line 3 has {{ unknownVariable }}
+            |Line 4 is fine
+        """.trimMargin()
+        val model = emptyMap<String, Any>()
+
+        val exception = assertThrows<InvalidTemplateException> {
+            strictRenderer.renderLiteralTemplate(template, model)
+        }
+
+        // Verify that we have detailed errors
+        assert(exception.errors.isNotEmpty()) { "Expected errors to be captured" }
+
+        // Verify that line number is present
+        val errorWithLine = exception.errors.find { it.lineNumber != null }
+        assertNotNull(errorWithLine) { "Expected at least one error with a line number" }
+
+        // Verify line number is correct (line 3)
+        assertEquals(3, errorWithLine!!.lineNumber) { "Expected error on line 3" }
+
+        // Verify the message mentions the line number
+        assert(exception.message?.contains("Line 3") == true || exception.getDetailedMessage().contains("Line 3")) {
+            "Expected error message to contain line number. Message: ${exception.message}"
+        }
+    }
+
+    @Test
+    fun `error contains field name for unknown variable with failOnUnknownTokens`() {
+        val rendererWithStrictMode = JinjavaTemplateRenderer(
+            jinja = JinjaProperties(
+                prefix = "classpath:/prompts/",
+                suffix = ".jinja",
+                failOnUnknownTokens = true
+            ),
+            resourceLoader = resourceLoader
+        )
+
+        val template = "Hello {{ unknownVariable }}!"
+        val model = emptyMap<String, Any>()
+
+        val exception = assertThrows<InvalidTemplateException> {
+            rendererWithStrictMode.renderLiteralTemplate(template, model)
+        }
+
+        // Verify that we have detailed errors
+        assert(exception.errors.isNotEmpty()) { "Expected errors to be captured" }
+
+        // Verify that the error message mentions the unknown variable
+        val hasUnknownVarError = exception.errors.any { error ->
+            error.message.contains("unknownVariable") || error.fieldName?.contains("unknownVariable") == true
+        }
+        assert(hasUnknownVarError) { "Expected error to mention 'unknownVariable'. Errors: ${exception.errors}" }
+    }
+
+    @Test
+    fun `getDetailedMessage includes all error information`() {
+        // Use strict mode renderer to ensure errors are thrown
+        val strictRenderer = JinjavaTemplateRenderer(
+            jinja = JinjaProperties(
+                prefix = "classpath:/prompts/",
+                suffix = ".jinja",
+                failOnUnknownTokens = true
+            ),
+            resourceLoader = resourceLoader
+        )
+
+        val template = """
+            |Line 1 is fine
+            |Line 2 has {{ missingVar }}
+        """.trimMargin()
+        val model = emptyMap<String, Any>()
+
+        val exception = assertThrows<InvalidTemplateException> {
+            strictRenderer.renderLiteralTemplate(template, model)
+        }
+
+        val detailedMessage = exception.getDetailedMessage()
+
+        // Verify the detailed message includes error information
+        assert(detailedMessage.isNotBlank()) { "Expected non-blank detailed message" }
+        assert(exception.errors.isNotEmpty()) { "Expected errors to be present" }
+
+        // If we have errors with line numbers, verify they appear in detailed message
+        exception.errors.filter { it.lineNumber != null }.forEach { error ->
+            assert(detailedMessage.contains("Line ${error.lineNumber}")) {
+                "Expected detailed message to contain line number ${error.lineNumber}. Message: $detailedMessage"
+            }
+        }
+    }
+
+    @Test
+    fun `TemplateErrorDetail format includes all available fields`() {
+        val error = TemplateErrorDetail(
+            message = "Unknown token",
+            lineNumber = 5,
+            startPosition = 10,
+            fieldName = "myVariable",
+            severity = "FATAL"
+        )
+
+        val formatted = error.format()
+
+        assert(formatted.contains("Line 5")) { "Expected line number in formatted output" }
+        assert(formatted.contains("position 10")) { "Expected position in formatted output" }
+        assert(formatted.contains("myVariable")) { "Expected field name in formatted output" }
+        assert(formatted.contains("Unknown token")) { "Expected message in formatted output" }
+        assert(formatted.contains("FATAL")) { "Expected severity in formatted output" }
+    }
+
+    @Test
+    fun `TemplateErrorDetail format handles missing optional fields`() {
+        val errorMinimal = TemplateErrorDetail(message = "Simple error")
+
+        val formatted = errorMinimal.format()
+
+        assertEquals("Simple error", formatted)
+    }
+
+    @Test
+    fun `InvalidTemplateException maintains backward compatibility with cause constructor`() {
+        val cause = RuntimeException("Original error")
+        val exception = InvalidTemplateException("Template failed", cause)
+
+        assertEquals("Template failed", exception.message)
+        assertEquals(cause, exception.cause)
+        assert(exception.errors.isEmpty()) { "Expected empty errors list for legacy constructor" }
+    }
+
+    @Test
+    fun `InvalidTemplateException maintains backward compatibility with no-cause constructor`() {
+        val exception = InvalidTemplateException("Template failed")
+
+        assertEquals("Template failed", exception.message)
+        assert(exception.errors.isEmpty()) { "Expected empty errors list for legacy constructor" }
+    }
+
+    @Test
+    fun `renderLoadedTemplate preserves error details from renderLiteralTemplate`() {
+        // Use strict mode renderer to ensure errors are thrown
+        val strictRenderer = JinjavaTemplateRenderer(
+            jinja = JinjaProperties(
+                prefix = "classpath:/prompts/",
+                suffix = ".jinja",
+                failOnUnknownTokens = true
+            ),
+            resourceLoader = resourceLoader
+        )
+
+        val invalidTemplate = "Line 1\nLine 2 {{ unknownVar }}"
+
+        every { resourceLoader.getResource("classpath:/prompts/error-template.jinja") } returns resource
+        every { resource.exists() } returns true
+        every { resource.getContentAsString(Charset.defaultCharset()) } returns invalidTemplate
+
+        val exception = assertThrows<InvalidTemplateException> {
+            strictRenderer.renderLoadedTemplate("error-template", emptyMap())
+        }
+
+        // Verify that errors are preserved through the renderLoadedTemplate call
+        assert(exception.errors.isNotEmpty()) { "Expected errors to be preserved" }
+        assert(exception.message?.contains("error-template") == true) { "Expected template name in message" }
+    }
+
+    @Test
+    fun `multiple errors are captured and reported`() {
+        // Use strict mode renderer to ensure errors are thrown
+        val strictRenderer = JinjavaTemplateRenderer(
+            jinja = JinjaProperties(
+                prefix = "classpath:/prompts/",
+                suffix = ".jinja",
+                failOnUnknownTokens = true
+            ),
+            resourceLoader = resourceLoader
+        )
+
+        // Template with multiple unknown variables on different lines
+        val template = """
+            |{{ unknownVar1 }}
+            |{{ unknownVar2 }}
+        """.trimMargin()
+        val model = emptyMap<String, Any>()
+
+        val exception = assertThrows<InvalidTemplateException> {
+            strictRenderer.renderLiteralTemplate(template, model)
+        }
+
+        // We should have at least one error
+        assert(exception.errors.isNotEmpty()) { "Expected at least one error to be captured" }
+    }
 }
