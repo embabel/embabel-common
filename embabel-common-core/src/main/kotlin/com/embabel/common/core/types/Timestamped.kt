@@ -18,11 +18,21 @@ package com.embabel.common.core.types
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.Instant
 
+/**
+ * Enables consistent handling of timestamps across different types of data.
+ */
 interface Timestamped {
 
     @get:Schema(
-        description = "Timestamp of the search results",
+        description = "Timestamp of the object",
         example = "2024-07-01T00:00:00Z",
     )
     val timestamp: Instant
+
+    /**
+     * Returns true if this object is newer than the other, based on their timestamps.
+     */
+    infix fun isLaterThan(other: Timestamped): Boolean {
+        return this.timestamp.isAfter(other.timestamp)
+    }
 }

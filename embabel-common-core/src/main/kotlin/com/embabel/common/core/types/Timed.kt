@@ -18,6 +18,9 @@ package com.embabel.common.core.types
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.Duration
 
+/**
+ * Enables consistent handling of durations across different types of data.
+ */
 interface Timed {
 
     /**
