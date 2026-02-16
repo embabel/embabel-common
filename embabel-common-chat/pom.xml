@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.embabel.common</groupId>
+        <artifactId>embabel-common-parent</artifactId>
+        <version>0.1.10-SNAPSHOT</version>
+    </parent>
+    <artifactId>embabel-common-chat</artifactId>
+    <packaging>jar</packaging>
+    <name>Embabel Common Chat</name>
+    <description>Common chat and conversation abstractions for storage-agnostic persistence</description>
+    <url>https://github.com/embabel/embabel-common</url>
+
+    <scm>
+        <url>https://github.com/embabel/embabel-common</url>
+        <connection>scm:git:https://github.com/embabel/embabel-common.git</connection>
+        <developerConnection>scm:git:https://github.com/embabel/embabel-common.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.embabel.common</groupId>
+            <artifactId>embabel-common-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>
