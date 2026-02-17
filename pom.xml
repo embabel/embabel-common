@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.embabel.common</groupId>
     <artifactId>embabel-common-parent</artifactId>
-    <version>0.1.10</version>
+    <version>0.1.11-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Embabel Common Parent</name>
     <description>Common dependencies shared by child modules.</description>
@@ -30,7 +30,7 @@
         <url>https://github.com/embabel/embabel-common</url>
         <connection>scm:git:https://github.com/embabel/embabel-common.git</connection>
         <developerConnection>scm:git:https://github.com/embabel/embabel-common.git</developerConnection>
-        <tag>v0.1.10</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
