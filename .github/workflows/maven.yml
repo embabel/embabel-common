@@ -1,17 +1,12 @@
 # This workflow will build a Kotlin project with Maven
-
 name: Build
-
 on:
   push:
   pull_request:
     types: [ opened, synchronize, reopened ]
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -25,3 +20,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -U -B test verify
+
+  notify:
+    needs: [build]
+    if: failure() && github.ref == 'refs/heads/main'
+    uses: embabel/embabel-build/.github/workflows/discord-notify.yml@main
+    secrets: inherit
