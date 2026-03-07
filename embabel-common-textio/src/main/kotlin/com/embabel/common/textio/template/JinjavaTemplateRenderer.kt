@@ -31,18 +31,29 @@ import org.springframework.util.DigestUtils
 import java.io.IOException
 import java.nio.charset.Charset
 
-data class JinjaProperties(
+/**
+ * Properties for configuring the Jinja template renderer.
+ *
+ * @param prefix The prefix to be added to template names when loading templates. Spring resource loading syntax.
+ * Default is "classpath:/prompts/".
+ * @param suffix The suffix to be added to template names when loading templates. Default is ".jinja".
+ * @param failOnUnknownTokens Whether to throw an exception if the template contains unknown tokens. Default is false.
+ */
+data class JinjaProperties @JvmOverloads constructor(
     val prefix: String,
     val suffix: String = ".jinja",
     val failOnUnknownTokens: Boolean = false,
-)
+) {
+
+    fun withFailOnUnknownTokens(fail: Boolean): JinjaProperties = copy(failOnUnknownTokens = fail)
+}
 
 /**
  * Wrap HubSpot Jinjava to render templates.
  * Files are expected to end with '.jinja'
  * Don't forget to escape anything that may be problematic with {{ title|e}} syntax
  */
-class JinjavaTemplateRenderer(
+class JinjavaTemplateRenderer @JvmOverloads constructor(
     private val jinja: JinjaProperties = JinjaProperties("classpath:/prompts/", ".jinja", false),
     private val resourceLoader: ResourceLoader = DefaultResourceLoader(),
 ) : TemplateRenderer {
