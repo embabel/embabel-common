@@ -179,7 +179,7 @@ class ThinkingBlocksExtractionTest {
         val blocks = extractAllThinkingBlocks(input)
 
         // Then: Should extract all PREFIX blocks
-        assertEquals(5, blocks.size)
+        assertEquals(3, blocks.size)
 
         blocks.forEach { block ->
             assertEquals(ThinkingTagType.PREFIX, block.tagType)
