@@ -33,3 +33,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         
         run: mvn -P flatten-pom -DskipTests=true clean deploy
+
+      - name: Trigger downstream module builds
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository: embabel/embabel-agent
+          event-type: common-snapshots-deployed
