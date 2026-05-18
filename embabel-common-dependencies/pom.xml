@@ -4,12 +4,11 @@
     <parent>
         <groupId>com.embabel.build</groupId>
         <artifactId>embabel-dependencies-parent</artifactId>
-        <version>0.1.13</version>
+        <version>0.1.14-SNAPSHOT</version>
         <relativePath />
     </parent>
     <groupId>com.embabel.common</groupId>
     <artifactId>embabel-common-dependencies</artifactId>
-    <version>0.1.13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Embabel Common Dependencies</name>
     <description>Embabel Common Dependencies for internal or external modules</description>
