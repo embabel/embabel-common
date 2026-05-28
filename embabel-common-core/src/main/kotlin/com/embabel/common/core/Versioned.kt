@@ -15,7 +15,7 @@
  */
 package com.embabel.common.core
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import tools.jackson.databind.annotation.JsonDeserialize
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
