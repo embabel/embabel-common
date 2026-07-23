@@ -15,9 +15,9 @@
  */
 package com.embabel.common.util
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+import tools.jackson.core.JsonGenerator
+import tools.jackson.databind.SerializationContext
+import tools.jackson.databind.ValueSerializer
 
 /**
  * Use @JsonSerialize(using = ComputerSaysNoSerializer.class) to prevent serialization of
@@ -28,9 +28,9 @@ import com.fasterxml.jackson.databind.SerializerProvider
  *
  * @param <T>
 </T> */
-class ComputerSaysNoSerializer<T> : JsonSerializer<T>() {
+class ComputerSaysNoSerializer<T> : ValueSerializer<T>() {
 
-    override fun serialize(value: T, gen: JsonGenerator, serializers: SerializerProvider) {
+    override fun serialize(value: T, gen: JsonGenerator, serializers: SerializationContext) {
         throw IllegalArgumentException(
             "Computer says no to serializing objects of type ${value!!::class.java.name} as it is internal"
         )
