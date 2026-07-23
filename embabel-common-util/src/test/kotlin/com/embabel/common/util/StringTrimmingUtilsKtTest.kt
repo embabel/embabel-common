@@ -18,7 +18,6 @@ package com.embabel.common.util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.function.Executable
 
 internal class StringTrimmingUtilsTest {
 
@@ -28,16 +27,16 @@ internal class StringTrimmingUtilsTest {
         internal inner class TestInvalidArgs {
             @Test
             fun testMaxLessThanKeepRight() {
-                Assertions.assertThrows<java.lang.IllegalArgumentException?>(
-                    java.lang.IllegalArgumentException::class.java,
-                    Executable { trim("foo", 10, 11) })
+                Assertions.assertThrows(IllegalArgumentException::class.java) {
+                    trim("foo", 10, 11)
+                }
             }
 
             @Test
             fun testMaxLessThanEllipsis() {
-                Assertions.assertThrows<java.lang.IllegalArgumentException?>(
-                    IllegalArgumentException::class.java,
-                    Executable { trim("foo", 2, 1, "weroiwueoiruwoeiruowieurowieuruwieur") })
+                Assertions.assertThrows(IllegalArgumentException::class.java) {
+                    trim("foo", 2, 1, "weroiwueoiruwoeiruowieurowieuruwieur")
+                }
             }
         }
 
