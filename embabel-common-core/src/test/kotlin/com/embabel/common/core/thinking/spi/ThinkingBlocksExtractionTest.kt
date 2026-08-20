@@ -453,7 +453,7 @@ class ThinkingBlocksExtractionTest {
     // ====================
 
     @Test
-    fun `includedTags keeps only matching TAG blocks; PREFIX and NO_PREFIX pass through`() {
+    fun `includedTags keeps only matching TAG blocks and PREFIX and NO_PREFIX pass through`() {
         val input = """
             <think>think content</think>
             <analysis>analysis content</analysis>
