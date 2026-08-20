@@ -20,14 +20,21 @@ import com.embabel.common.core.thinking.ThinkingTagType
 import com.embabel.common.core.thinking.ThinkingTags
 
 /**
- * Extract all thinking blocks from input text.
+ * Extract all thinking blocks from input text, with optional tag-name filtering.
  *
  * Processes the input text to find and extract all thinking content
  * in various formats (tagged, prefix, or untagged), returning detailed
  * metadata about each block found.
+ *
+ * [includedTags] and [excludedTags] apply only to [ThinkingTagType.TAG] blocks.
+ * [ThinkingTagType.PREFIX] and [ThinkingTagType.NO_PREFIX] blocks always pass through.
  */
 @InternalThinkingApi
-fun extractAllThinkingBlocks(input: String): List<ThinkingBlock> {
+fun extractAllThinkingBlocks(
+    input: String,
+    includedTags: Set<String>? = null,
+    excludedTags: Set<String>? = null,
+): List<ThinkingBlock> {
     val blocks = mutableListOf<ThinkingBlock>()
 
     // Extract thinking blocks in priority order: Tags (most common) → Prefix → No Prefix (least common)
@@ -120,7 +127,25 @@ fun extractAllThinkingBlocks(input: String): List<ThinkingBlock> {
         }
     }
 
-    return blocks.sortedBy { input.indexOf(it.content) }
+    return filterBlocks(blocks, includedTags, excludedTags).sortedBy { input.indexOf(it.content) }
+}
+
+private fun filterBlocks(
+    blocks: List<ThinkingBlock>,
+    includedTags: Set<String>?,
+    excludedTags: Set<String>?,
+): List<ThinkingBlock> {
+    if (includedTags == null && excludedTags == null) return blocks
+    return blocks.filter { block ->
+        when (block.tagType) {
+            ThinkingTagType.TAG -> {
+                val isIncluded = includedTags == null || block.tagValue in includedTags
+                val isNotExcluded = excludedTags == null || block.tagValue !in excludedTags
+                isIncluded && isNotExcluded
+            }
+            else -> true
+        }
+    }
 }
 
 /**

@@ -449,7 +449,78 @@ class ThinkingBlocksExtractionTest {
     }
 
     // ====================
-    // 4. Order & Priority
+    // 4. Tag Filtering
+    // ====================
+
+    @Test
+    fun `includedTags keeps only matching TAG blocks and PREFIX and NO_PREFIX pass through`() {
+        val input = """
+            <think>think content</think>
+            <analysis>analysis content</analysis>
+            //THINKING: prefix content
+            No-prefix content here.
+            {"result": "x"}
+        """.trimIndent()
+
+        val blocks = extractAllThinkingBlocks(input, includedTags = setOf("think"))
+
+        // TAG: only "think" kept, "analysis" dropped
+        val tagBlocks = blocks.filter { it.tagType == ThinkingTagType.TAG }
+        assertEquals(1, tagBlocks.size)
+        assertEquals("think", tagBlocks.first().tagValue)
+        // PREFIX and NO_PREFIX always pass through
+        assertTrue(blocks.any { it.tagType == ThinkingTagType.PREFIX })
+        assertTrue(blocks.any { it.tagType == ThinkingTagType.NO_PREFIX })
+    }
+
+    @Test
+    fun `includedTags with multiple tags keeps all matching TAG blocks`() {
+        val input = """
+            <think>think content</think>
+            <analysis>analysis content</analysis>
+            <plan>plan content</plan>
+            {"result": "x"}
+        """.trimIndent()
+
+        val blocks = extractAllThinkingBlocks(input, includedTags = setOf("think", "plan"))
+
+        assertEquals(2, blocks.size)
+        assertEquals(setOf("think", "plan"), blocks.map { it.tagValue }.toSet())
+    }
+
+    @Test
+    fun `excludedTags removes matching TAG blocks and passes through PREFIX and NO_PREFIX`() {
+        val input = """
+            <think>think content</think>
+            <analysis>analysis content</analysis>
+            //THINKING: prefix content
+            {"result": "x"}
+        """.trimIndent()
+
+        val blocks = extractAllThinkingBlocks(input, excludedTags = setOf("think"))
+
+        assertEquals(2, blocks.size)
+        assertTrue(blocks.none { it.tagValue == "think" })
+        assertTrue(blocks.any { it.tagType == ThinkingTagType.TAG && it.tagValue == "analysis" })
+        assertTrue(blocks.any { it.tagType == ThinkingTagType.PREFIX })
+    }
+
+    @Test
+    fun `null includedTags and excludedTags returns all blocks unchanged`() {
+        val input = """
+            <think>think content</think>
+            //THINKING: prefix content
+            {"result": "x"}
+        """.trimIndent()
+
+        val unfiltered = extractAllThinkingBlocks(input)
+        val filtered = extractAllThinkingBlocks(input, includedTags = null, excludedTags = null)
+
+        assertEquals(unfiltered.size, filtered.size)
+    }
+
+    // ====================
+    // 5. Order & Priority
     // ====================
 
     @Test
