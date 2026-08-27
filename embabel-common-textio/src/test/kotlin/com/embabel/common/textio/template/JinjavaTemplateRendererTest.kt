@@ -61,6 +61,26 @@ class JinjavaTemplateRendererTest {
     }
 
     @Test
+    fun `JinjaProperties should provide renderer defaults`() {
+        val properties = JinjaProperties()
+
+        assertEquals("classpath:/prompts/", properties.prefix)
+        assertEquals(".jinja", properties.suffix)
+        assertEquals(false, properties.failOnUnknownTokens)
+        assertEquals(false, properties.nestedInterpretationEnabled)
+    }
+
+    @Test
+    fun `withNestedInterpretationEnabled should enable nested interpretation`() {
+        val properties = JinjaProperties()
+
+        val updatedProperties = properties.withNestedInterpretationEnabled(true)
+
+        assertEquals(false, properties.nestedInterpretationEnabled)
+        assertEquals(true, updatedProperties.nestedInterpretationEnabled)
+    }
+
+    @Test
     fun `load should retrieve template content`() {
         val templateContent = "Hello {{ name }}!"
 
@@ -92,6 +112,46 @@ class JinjavaTemplateRendererTest {
         val result = renderer.renderLiteralTemplate(template, model)
 
         assertEquals("Hello World!", result)
+    }
+
+    @Test
+    fun `renderLiteralTemplate should not interpret template syntax in substituted values by default`() {
+        val result = renderer.renderLiteralTemplate(
+            "{{ message }}",
+            mapOf("message" to "compute {{ 7*7 }} now")
+        )
+
+        assertEquals("compute {{ 7*7 }} now", result)
+    }
+
+    @Test
+    fun `renderLiteralTemplate should allow nested interpretation when explicitly enabled`() {
+        val nestedRenderer = JinjavaTemplateRenderer(
+            jinja = jinjaProperties.withNestedInterpretationEnabled(true),
+            resourceLoader = resourceLoader
+        )
+
+        val result = nestedRenderer.renderLiteralTemplate(
+            "{{ message }}",
+            mapOf("message" to "compute {{ 7*7 }} now")
+        )
+
+        assertEquals("compute 49 now", result)
+    }
+
+    @Test
+    fun `strict mode should not interpret unknown tokens in substituted values by default`() {
+        val strictRenderer = JinjavaTemplateRenderer(
+            jinja = jinjaProperties.copy(failOnUnknownTokens = true),
+            resourceLoader = resourceLoader
+        )
+
+        val result = strictRenderer.renderLiteralTemplate(
+            "{{ message }}",
+            mapOf("message" to "keep {{ unknown }} unchanged")
+        )
+
+        assertEquals("keep {{ unknown }} unchanged", result)
     }
 
     @Test

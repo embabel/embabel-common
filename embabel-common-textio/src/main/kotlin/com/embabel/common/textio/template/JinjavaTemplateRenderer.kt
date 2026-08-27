@@ -38,23 +38,31 @@ import java.nio.charset.Charset
  * Default is "classpath:/prompts/".
  * @param suffix The suffix to be added to template names when loading templates. Default is ".jinja".
  * @param failOnUnknownTokens Whether to throw an exception if the template contains unknown tokens. Default is false.
+ * @param nestedInterpretationEnabled Whether to interpret template syntax found inside substituted values.
+ * Default is false. Do not enable this when rendering untrusted or user-provided values.
  */
 data class JinjaProperties @JvmOverloads constructor(
-    val prefix: String,
-    val suffix: String = ".jinja",
-    val failOnUnknownTokens: Boolean = false,
+    var prefix: String = "classpath:/prompts/",
+    var suffix: String = ".jinja",
+    var failOnUnknownTokens: Boolean = false,
+    var nestedInterpretationEnabled: Boolean = false,
 ) {
 
     fun withFailOnUnknownTokens(fail: Boolean): JinjaProperties = copy(failOnUnknownTokens = fail)
+
+    fun withNestedInterpretationEnabled(enabled: Boolean): JinjaProperties =
+        copy(nestedInterpretationEnabled = enabled)
 }
 
 /**
- * Wrap HubSpot Jinjava to render templates.
- * Files are expected to end with '.jinja'
- * Don't forget to escape anything that may be problematic with {{ title|e}} syntax
+ * Wraps HubSpot Jinjava to render templates.
+ * Files are expected to end with '.jinja'.
+ *
+ * Nested interpretation is disabled by default so template syntax inside substituted values is treated as data.
+ * Enable it only for trusted values.
  */
 class JinjavaTemplateRenderer @JvmOverloads constructor(
-    private val jinja: JinjaProperties = JinjaProperties("classpath:/prompts/", ".jinja", false),
+    private val jinja: JinjaProperties = JinjaProperties(),
     private val resourceLoader: ResourceLoader = DefaultResourceLoader(),
 ) : TemplateRenderer {
     private val logger: Logger = LoggerFactory.getLogger(JinjavaTemplateRenderer::class.java)
@@ -74,6 +82,7 @@ class JinjavaTemplateRenderer @JvmOverloads constructor(
         try {
             val jcConfig = JinjavaConfig.newBuilder()
                 .withFailOnUnknownTokens(jinja.failOnUnknownTokens)
+                .withNestedInterpretationEnabled(jinja.nestedInterpretationEnabled)
                 .withTrimBlocks(true)
                 .build()
             val jinjava = Jinjava(jcConfig).apply {
