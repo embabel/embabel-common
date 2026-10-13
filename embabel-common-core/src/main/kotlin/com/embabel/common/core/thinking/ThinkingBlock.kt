@@ -16,6 +16,20 @@
 package com.embabel.common.core.thinking
 
 /**
+ * Distinguishes how a [ThinkingBlock] was produced.
+ *
+ * NATIVE: the provider returned reasoning through its native API
+ *   (Anthropic thinking blocks, OpenAI reasoningContent, Ollama thinking field).
+ *
+ * PROMPT_EXTRACTED: the application prompted the model to emit reasoning
+ *   in visible text and Embabel extracted it via tag or prefix patterns.
+ */
+enum class ThinkingOrigin {
+    NATIVE,
+    PROMPT_EXTRACTED,
+}
+
+/**
  * Represents a thinking block extracted from LLM output.
  *
  * This class encapsulates thinking content that LLMs generate as part of their
@@ -47,5 +61,17 @@ data class ThinkingBlock(
      * For [ThinkingTagType.PREFIX]: the prefix identifier (e.g., "THINKING")
      * For [ThinkingTagType.NO_PREFIX]: empty string
      */
-    val tagValue: String
+    val tagValue: String,
+
+    /**
+     * How this block was produced. Defaults to [ThinkingOrigin.PROMPT_EXTRACTED] so
+     * all existing construction sites remain valid without change.
+     */
+    val origin: ThinkingOrigin = ThinkingOrigin.PROMPT_EXTRACTED,
+
+    /**
+     * Opaque provider metadata. Used to carry values such as Anthropic thinking signatures
+     * that must be preserved for multi-turn calls but are not displayable reasoning text.
+     */
+    val metadata: Map<String, Any> = emptyMap(),
 )
