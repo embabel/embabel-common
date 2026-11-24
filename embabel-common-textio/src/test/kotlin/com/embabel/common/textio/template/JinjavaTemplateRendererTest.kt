@@ -486,4 +486,41 @@ class JinjavaTemplateRendererTest {
         // We should have at least one error
         assert(exception.errors.isNotEmpty()) { "Expected at least one error to be captured" }
     }
+
+    @Test
+    fun `a setting changed after construction takes effect on the next render`() {
+        val template = "{{ missing }}"
+        assertEquals("", renderer.renderLiteralTemplate(template, emptyMap()))
+
+        /* The engine is reused across renders; it must still follow the properties it was built from. */
+        jinjaProperties.failOnUnknownTokens = true
+
+        assertThrows<InvalidTemplateException> { renderer.renderLiteralTemplate(template, emptyMap()) }
+    }
+
+    @Test
+    fun `a failed render leaves the next render unaffected`() {
+        assertThrows<InvalidTemplateException> { renderer.renderLiteralTemplate("{% if %}", emptyMap()) }
+
+        assertEquals("Hello Ada", renderer.renderLiteralTemplate("Hello {{ name }}", mapOf("name" to "Ada")))
+    }
+
+    @Test
+    fun `renders on many threads at once each get their own model`() {
+        val pool = java.util.concurrent.Executors.newFixedThreadPool(8)
+        try {
+            val renders = (1..400).map { i ->
+                pool.submit<String> {
+                    renderer.renderLiteralTemplate("{{ name }}-{% if n > 200 %}big{% else %}small{% endif %}", mapOf("name" to "r$i", "n" to i))
+                }
+            }
+
+            renders.forEachIndexed { index, render ->
+                val i = index + 1
+                assertEquals("r$i-${if (i > 200) "big" else "small"}", render.get())
+            }
+        } finally {
+            pool.shutdown()
+        }
+    }
 }
