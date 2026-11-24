@@ -67,6 +67,36 @@ class JinjavaTemplateRenderer @JvmOverloads constructor(
 ) : TemplateRenderer {
     private val logger: Logger = LoggerFactory.getLogger(JinjavaTemplateRenderer::class.java)
 
+    /** The settings an engine is built from, so a change to [jinja] after construction still takes effect. */
+    private data class EngineSettings(val failOnUnknownTokens: Boolean, val nestedInterpretationEnabled: Boolean)
+
+    private class Engine(val settings: EngineSettings, val jinjava: Jinjava)
+
+    /*
+     * One engine, reused across renders. Building a Jinjava registers its whole library of filters, functions
+     * and tags, and that construction cost more than rendering a short template: a realm documents source
+     * rendering three templates per record spent 7-9% of a 66,000-record ingest building engines. A Jinjava is
+     * safe to share between threads, since each render gets an interpreter of its own.
+     */
+    @Volatile
+    private var engine: Engine? = null
+
+    private fun engine(): Jinjava {
+        val settings = EngineSettings(jinja.failOnUnknownTokens, jinja.nestedInterpretationEnabled)
+        engine?.takeIf { it.settings == settings }?.let { return it.jinjava }
+        val config = JinjavaConfig.newBuilder()
+            .withFailOnUnknownTokens(settings.failOnUnknownTokens)
+            .withNestedInterpretationEnabled(settings.nestedInterpretationEnabled)
+            .withTrimBlocks(true)
+            .build()
+        val jinjava = Jinjava(config).apply {
+            registerFilter(EscFilter())
+            resourceLocator = SpringResourceLocator()
+        }
+        engine = Engine(settings, jinjava)
+        return jinjava
+    }
+
     /**
      * Render a template string without loading it
      *
@@ -80,16 +110,7 @@ class JinjavaTemplateRenderer @JvmOverloads constructor(
         model: Map<String, Any>,
     ): String {
         try {
-            val jcConfig = JinjavaConfig.newBuilder()
-                .withFailOnUnknownTokens(jinja.failOnUnknownTokens)
-                .withNestedInterpretationEnabled(jinja.nestedInterpretationEnabled)
-                .withTrimBlocks(true)
-                .build()
-            val jinjava = Jinjava(jcConfig).apply {
-                registerFilter(EscFilter())
-                resourceLocator = SpringResourceLocator()
-            }
-            val result = jinjava.renderForResult(template, model)
+            val result = engine().renderForResult(template, model)
 
             // Check for fatal errors that require throwing an exception
             val fatalErrors = result.errors.filter { it.severity == ErrorType.FATAL }
