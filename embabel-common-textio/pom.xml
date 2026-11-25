@@ -29,6 +29,13 @@
             <groupId>com.hubspot.jinjava</groupId>
             <artifactId>jinjava</artifactId>
         </dependency>
+
+        <!-- GHSA-xxph-c9ww-hj94: pin patched Guava until the build BOM manages it. -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.7.2-jre</version>
+        </dependency>
     </dependencies>
 
 </project>
